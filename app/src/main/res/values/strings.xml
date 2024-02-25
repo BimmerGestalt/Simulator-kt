@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Headunit-kt</string>
+
+    <string name="notification_channel_connection">Service Notification</string>
+    <string name="notification_title">BCL Headunit</string>
+    <string name="notification_description">Ready for connections</string>
+    <string name="notification_shutdown">Shutdown</string>
+</resources>
