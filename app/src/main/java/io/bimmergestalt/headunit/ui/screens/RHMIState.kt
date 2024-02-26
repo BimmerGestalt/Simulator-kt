@@ -12,8 +12,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.navigation.NavController
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +27,16 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 	if (state == null) {
 		navController.popBackStack()
 		return
+	}
+
+	DisposableEffect(LocalLifecycleOwner.current) {
+		app.eventHandler(stateId, 1, mapOf(4 to true))  // focus
+		app.eventHandler(stateId, 11, mapOf(23 to true)) // visible
+
+		onDispose {
+			app.eventHandler(stateId, 1, mapOf(4 to false))  // focus
+			app.eventHandler(stateId, 11, mapOf(23 to false)) // visible
+		}
 	}
 
 	val scope: CoroutineScope = rememberCoroutineScope()
