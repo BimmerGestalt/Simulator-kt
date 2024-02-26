@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,14 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppInfo
+import io.bimmergestalt.headunit.ui.screens.Screens
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import kotlinx.coroutines.launch
 
 @Composable
-fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
+fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
 	Log.i("AppList", "Loading app list ${amApps.values.joinToString(",")}")
 	val knownAppsByCategory = remember { derivedStateOf {
 		AMAppsModel.knownApps.values
@@ -48,7 +53,7 @@ fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) 
 	val categories = remember { derivedStateOf {
 		(knownAppsByCategory.value.keys + entryButtonsByCategory.value.keys).sorted()
 	}}
-	Column {
+	Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 		categories.value.forEach { category ->
 			Text(modifier = Modifier.padding(start=4.dp, top=8.dp, bottom=4.dp),
 				style = MaterialTheme.typography.headlineMedium, text=category)
@@ -56,7 +61,9 @@ fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) 
 				AMAppEntry(app = app) {app.onClick()}
 			}
 			(entryButtonsByCategory.value[category] ?: emptyList()).forEach { (app, entryButton) ->
-				RHMIAppEntry(app = app, entryButton = entryButton)
+				RHMIAppEntry(app = app, entryButton = entryButton) { app, action ->
+					onClickAction(navController = navController, app, action)
+				}
 			}
 		}
 	}
@@ -77,12 +84,29 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 	}
 }
 
+suspend fun onClickAction(navController: NavController, app: RHMIAppInfo, action: RHMIAction?) {
+	action ?: return
+	Log.i("ClickAction", "Clicking action $app $action")
+	val raAction = action.asRAAction()
+	if (raAction != null) {
+		val result = app.actionHandler(raAction.id, emptyMap())
+		if (action is RHMIAction.CombinedAction && action.sync.toBoolean()) {
+			result.await()
+		}
+	}
+	val hmiAction = action.asHMIAction()
+	val targetState = hmiAction?.getTargetState()
+	if (targetState != null) {
+		navController.navigate(Screens.RHMIState.create(app.appId, targetState.id))
+	}
+}
+
 @Composable
-fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton) {
+fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onClickAction: suspend (RHMIAppInfo, RHMIAction?) -> Unit) {
 	val scope = rememberCoroutineScope()
 	Row(verticalAlignment = Alignment.CenterVertically,
 		modifier = Modifier
-			.clickable { scope.launch { app.actionHandler(entryButton.action, emptyMap()) } }
+			.clickable { scope.launch { onClickAction(app, entryButton.getAction()) } }
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
 	) {

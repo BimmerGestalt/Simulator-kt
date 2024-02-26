@@ -4,14 +4,13 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
-import de.bmw.idrive.BMWRemoting.RHMIDataTable
-import de.bmw.idrive.BMWRemoting.RHMIResourceData
-import de.bmw.idrive.BMWRemoting.RHMIResourceIdentifier
 import de.bmw.idrive.BMWRemoting.RHMIResourceType
 import de.bmw.idrive.BMWRemotingClient
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.models.RHMIApps
+import io.bimmergestalt.headunit.models.RHMIEvent
 import io.bimmergestalt.headunit.rhmi.RHMIResources
+import io.bimmergestalt.headunit.utils.asEtchIntOrAny
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import java.util.concurrent.ConcurrentHashMap
@@ -37,8 +36,8 @@ class RHMIManager(val state: RHMIApps) {
 			Log.e(TAG, "Error parsing resources for $appId", e)
 			throw BMWRemoting.IllegalArgumentException(-1, "Error parsing resources: $e")
 		}
-		val actionHandler: suspend (Int, Map<*, *>) -> Boolean = { actionId, args ->
-			onActionEvent(appId, actionId, args).await()
+		val actionHandler: (Int, Map<*, *>) -> Deferred<Boolean> = { actionId, args ->
+			onActionEvent(appId, actionId, args)
 		}
 		val eventHandler: (Int, Int, Map<*, *>) -> Unit = { componentId, eventId, args ->
 			onHmiEvent(appId, componentId, eventId, args)
@@ -116,13 +115,14 @@ class RHMIManager(val state: RHMIApps) {
 		// perhaps type validation should be done?
 		// but then Kotlin would need to know
 		// or an error callback needs to be handled from Dart
-		state.knownApps[appId]?.resources?.app?.modelStates?.put(modelId, value)
+		state.knownApps[appId]?.resources?.app?.modelStates?.put(modelId, value?.asEtchIntOrAny())
 	}
 	fun setProperty(appId: String, componentId: Int, propertyId: Int, value: Any?) {
 		state.knownApps[appId]?.resources?.app?.propertyStates?.get(componentId)?.put(propertyId, value)
-//		callbacks.rhmiSetProperty(appId, componentId, propertyId, value)
 	}
 	fun triggerEvent(appId: String, eventId: Int, args: Map<Int, Any?>) {
+		Log.i(TAG, "Triggering event $appId $eventId")
+		state.incomingEvents.tryEmit(RHMIEvent(appId, eventId, args))
 //		callbacks.rhmiTriggerEvent(appId, eventId, args)
 	}
 
