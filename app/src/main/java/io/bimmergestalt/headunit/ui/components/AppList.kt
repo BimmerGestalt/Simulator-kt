@@ -84,7 +84,7 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 		Image(app.icon.asImageBitmap(), null, modifier = Modifier
 			.padding(4.dp)
 			.size(32.dp))
-		Text(app.name)
+		Text(app.name, style = MaterialTheme.typography.headlineSmall)
 	}
 }
 

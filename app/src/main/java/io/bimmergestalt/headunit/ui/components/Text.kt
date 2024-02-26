@@ -1,5 +1,6 @@
 package io.bimmergestalt.headunit.ui.components
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +16,7 @@ fun TextModel(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifier
 		val textId = model.textId
 		val text = dictionary[textId]
 		if (text != null) {
-			Text(text, modifier = modifier)
+			Text(text, modifier = modifier, style = MaterialTheme.typography.headlineSmall)
 		} else {
 			Text("", modifier = modifier)
 		}
@@ -23,7 +24,7 @@ fun TextModel(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifier
 	else if (model is RHMIModel.RaDataModel) {
 		val text = model.value as? String
 		if (text != null) {
-			Text(text, modifier = modifier)
+			Text(text, modifier = modifier, style = MaterialTheme.typography.headlineSmall)
 		} else {
 			Text("", modifier = modifier)
 		}

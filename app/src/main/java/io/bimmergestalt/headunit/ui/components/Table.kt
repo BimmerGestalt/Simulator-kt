@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 
@@ -24,6 +25,7 @@ fun Table(
 	rowModifier: Modifier = Modifier,
 	verticalLazyListState: LazyListState = rememberLazyListState(),
 	horizontalScrollState: ScrollState = rememberScrollState(),
+	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 	columnCount: Int,
 	rowCount: Int,
 	beforeRow: (@Composable (rowIndex: Int) -> Unit)? = null,
@@ -38,7 +40,7 @@ fun Table(
 				Column {
 					beforeRow?.invoke(rowIndex)
 
-					Row(modifier = rowModifier) {
+					Row(modifier = rowModifier, verticalAlignment = verticalAlignment) {
 						(0 until columnCount).forEach { columnIndex ->
 							Box(modifier = Modifier.layout { measurable, constraints ->
 								val placeable = measurable.measure(constraints)
