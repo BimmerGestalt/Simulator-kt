@@ -3,7 +3,6 @@ package io.bimmergestalt.headunit.ui.components
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -58,11 +58,15 @@ fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiAp
 			Text(modifier = Modifier.padding(start=4.dp, top=8.dp, bottom=4.dp),
 				style = MaterialTheme.typography.headlineMedium, text=category)
 			(knownAppsByCategory.value[category] ?: emptyList()).forEach { app ->
-				AMAppEntry(app = app) {app.onClick()}
+				key(app.appId) {
+					AMAppEntry(app = app) { app.onClick() }
+				}
 			}
 			(entryButtonsByCategory.value[category] ?: emptyList()).forEach { (app, entryButton) ->
-				RHMIAppEntry(app = app, entryButton = entryButton) { app, action ->
-					onClickAction(navController = navController, app, action)
+				key(app.appId, entryButton.id) {
+					RHMIAppEntry(app = app, entryButton = entryButton) { app, action ->
+						onClickAction(navController = navController, app, action)
+					}
 				}
 			}
 		}

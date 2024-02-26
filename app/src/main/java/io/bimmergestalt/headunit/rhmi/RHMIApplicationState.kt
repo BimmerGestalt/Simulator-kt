@@ -20,11 +20,9 @@ class RHMIApplicationState(): RHMIApplication() {
 	val propertyStates = HashMap<Int, MutableMap<Int, Any?>>().withDefault { mutableStateMapOf() }
 
 	override fun setModel(modelId: Int, value: Any) {
-		println("Setting value modelId $modelId -> $value")
 		modelStates[modelId] = value
 	}
 	override fun getModel(modelId: Int): Any? {
-		println("Loading value modelId $modelId -> ${modelStates[modelId]} ${modelStates[modelId]?.javaClass}")
 		return modelStates[modelId]
 	}
 
