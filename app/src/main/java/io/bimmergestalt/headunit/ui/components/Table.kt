@@ -1,6 +1,7 @@
 package io.bimmergestalt.headunit.ui.components
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ fun Table(
 	verticalLazyListState: LazyListState = rememberLazyListState(),
 	horizontalScrollState: ScrollState = rememberScrollState(),
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+	onClickRow: (rowIndex: Int) -> Unit = {},
 	columnCount: Int,
 	rowCount: Int,
 	beforeRow: (@Composable (rowIndex: Int) -> Unit)? = null,
@@ -40,7 +42,7 @@ fun Table(
 				Column {
 					beforeRow?.invoke(rowIndex)
 
-					Row(modifier = rowModifier, verticalAlignment = verticalAlignment) {
+					Row(modifier = rowModifier.clickable { onClickRow(rowIndex) }, verticalAlignment = verticalAlignment) {
 						(0 until columnCount).forEach { columnIndex ->
 							Box(modifier = Modifier.layout { measurable, constraints ->
 								val placeable = measurable.measure(constraints)

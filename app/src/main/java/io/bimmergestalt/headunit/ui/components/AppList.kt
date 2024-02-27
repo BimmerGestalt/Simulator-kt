@@ -25,7 +25,7 @@ import androidx.navigation.NavController
 import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppInfo
-import io.bimmergestalt.headunit.ui.screens.Screens
+import io.bimmergestalt.headunit.ui.controllers.onClickAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import kotlinx.coroutines.launch
@@ -33,6 +33,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
 	Log.i("AppList", "Loading app list ${amApps.values.joinToString(",")}")
+	val scope = rememberCoroutineScope()
+
 	val knownAppsByCategory = remember { derivedStateOf {
 		AMAppsModel.knownApps.values
 			.sortedBy { it.name }
@@ -64,8 +66,10 @@ fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiAp
 			}
 			(entryButtonsByCategory.value[category] ?: emptyList()).forEach { (app, entryButton) ->
 				key(app.appId, entryButton.id) {
-					RHMIAppEntry(app = app, entryButton = entryButton) { app, action ->
-						onClickAction(navController = navController, app, action)
+					RHMIAppEntry(app = app, entryButton = entryButton) { action ->
+						scope.launch {
+							onClickAction(navController = navController, app)(action, null)
+						}
 					}
 				}
 			}
@@ -88,36 +92,18 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 	}
 }
 
-suspend fun onClickAction(navController: NavController, app: RHMIAppInfo, action: RHMIAction?) {
-	action ?: return
-	Log.i("ClickAction", "Clicking action $app $action")
-	val raAction = action.asRAAction()
-	if (raAction != null) {
-		val result = app.actionHandler(raAction.id, emptyMap())
-		if (action is RHMIAction.CombinedAction && action.sync.toBoolean()) {
-			result.await()
-		}
-	}
-	val hmiAction = action.asHMIAction()
-	val targetState = hmiAction?.getTargetState()
-	if (targetState != null) {
-		navController.navigate(Screens.RHMIState.create(app.appId, targetState.id))
-	}
-}
-
 @Composable
-fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onClickAction: suspend (RHMIAppInfo, RHMIAction?) -> Unit) {
-	val scope = rememberCoroutineScope()
+fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onClickAction: (RHMIAction?) -> Unit) {
 	Row(verticalAlignment = Alignment.CenterVertically,
 		modifier = Modifier
-			.clickable { scope.launch { onClickAction(app, entryButton.getAction()) } }
+			.clickable { onClickAction(entryButton.getAction()) }
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
 	) {
-		ImageModel(app = app, model = entryButton.getImageModel(), modifier = Modifier
+		ImageModel(model = entryButton.getImageModel(), imageDB = app.resources.imageDB, modifier = Modifier
 			.padding(4.dp)
 			.size(32.dp))
 
-		TextModel(app = app, model = entryButton.getModel())
+		TextModel(model = entryButton.getModel(), textDB = app.resources.textDB)
 	}
 }

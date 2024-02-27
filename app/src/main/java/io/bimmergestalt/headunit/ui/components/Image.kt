@@ -12,14 +12,15 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.headunit.models.RHMIAppInfo
+import io.bimmergestalt.headunit.ui.screens.LocalImageDB
 import io.bimmergestalt.headunit.utils.decodeBitmap
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 @Composable
-fun ImageModel(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifier) {
+fun ImageModel(model: RHMIModel?, modifier: Modifier = Modifier, imageDB: Map<Int, Bitmap> = LocalImageDB.current) {
 	if (model is RHMIModel.ImageIdModel) {
 		val imageId = model.imageId
-		val image = app.resources.imageDB[imageId]
+		val image = imageDB[imageId]
 		ImageBitmapNullable(bitmap = image, contentDescription = null, modifier = modifier)
 	}
 	else if (model is RHMIModel.RaImageModel) {
@@ -32,7 +33,7 @@ fun ImageModel(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifie
 }
 
 @Composable
-fun ImageCell(app: RHMIAppInfo, data: Any?, modifier: Modifier = Modifier) {
+fun ImageCell(data: Any?, modifier: Modifier = Modifier, imageDB: Map<Int, Bitmap> = LocalImageDB.current) {
 	if (data is ByteArray) {
 		val bitmap = data.decodeBitmap()
 		ImageBitmapNullable(bitmap = bitmap, contentDescription = null, modifier = modifier)
@@ -40,7 +41,7 @@ fun ImageCell(app: RHMIAppInfo, data: Any?, modifier: Modifier = Modifier) {
 		val bitmap = data.data.decodeBitmap()
 		ImageBitmapNullable(bitmap = bitmap, contentDescription = null, modifier = modifier)
 	} else if (data is BMWRemoting.RHMIResourceIdentifier && data.type == BMWRemoting.RHMIResourceType.IMAGEID) {
-		val image = app.resources.imageDB[data.id]
+		val image = imageDB[data.id]
 		ImageBitmapNullable(bitmap = image, contentDescription = null, modifier = modifier)
 	}
 }

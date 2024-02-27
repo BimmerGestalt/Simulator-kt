@@ -16,7 +16,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import kotlinx.coroutines.launch
 
 @Composable
-fun ToolbarDrawerSheet(app: RHMIAppInfo, state: RHMIState.ToolbarState, drawerState: DrawerState, onClickAction: suspend (RHMIAppInfo, RHMIAction?) -> Unit) {
+fun ToolbarDrawerSheet(state: RHMIState.ToolbarState, drawerState: DrawerState, onClickAction: (RHMIAction?) -> Unit) {
 	val scope = rememberCoroutineScope()
 	ModalDrawerSheet {
 		NavigationDrawerItem(
@@ -29,10 +29,10 @@ fun ToolbarDrawerSheet(app: RHMIAppInfo, state: RHMIState.ToolbarState, drawerSt
 		state.toolbarComponentsList.forEach {
 
 			NavigationDrawerItem(
-				label = { TextModel(app = app, model = it.getTooltipModel()) },
-				icon = {  ImageModel(app = app, model = it.getImageModel())},
+				label = { TextModel(model = it.getTooltipModel()) },
+				icon = {  ImageModel(model = it.getImageModel())},
 				selected = false,
-				onClick = { scope.launch { onClickAction(app, it.getAction()) } }
+				onClick = { onClickAction(it.getAction()) }
 			)
 		}
 	}

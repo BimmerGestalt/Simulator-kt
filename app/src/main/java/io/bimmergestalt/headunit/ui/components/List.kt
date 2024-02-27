@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemoting.RHMIResourceIdentifier
-import io.bimmergestalt.headunit.models.RHMIAppInfo
+import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 
@@ -20,14 +20,15 @@ fun parseColumnWidths(widths: Any?): List<Dp?> {
 }
 
 @Composable
-fun List(app: RHMIAppInfo, component: RHMIComponent.List, modifier: Modifier = Modifier) {
+fun List(component: RHMIComponent.List, modifier: Modifier = Modifier, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val columnWidths = parseColumnWidths(component.properties[RHMIProperty.PropertyId.LIST_COLUMNWIDTH.id]?.value)
 	val model = component.getModel()?.value
 	if (model != null) {
 		Table(
 			columnCount = model.width,
 			rowCount = model.height,
-			modifier = modifier
+			modifier = modifier,
+			onClickRow = { rowIndex -> onClickAction(component.getAction(), mapOf(1 to rowIndex)) }
 		) { col, row ->
 			val data = model[row][col]
 			val maybeWidth = columnWidths.getOrNull(col)
@@ -36,18 +37,18 @@ fun List(app: RHMIAppInfo, component: RHMIComponent.List, modifier: Modifier = M
 				modifier = modifier.width(maybeWidth)
 			}
 			val maxLines = if (component.getModel()?.modelType == "richText") Int.MAX_VALUE else 2
-			Cell(app, data, modifier = modifier, maxLines = maxLines)
+			Cell(data, modifier = modifier, maxLines = maxLines)
 		}
 	}
 }
 
 @Composable
-fun Cell(app: RHMIAppInfo, data: Any?, modifier: Modifier = Modifier, maxLines: Int = Int.MAX_VALUE) {
+fun Cell(data: Any?, modifier: Modifier = Modifier, maxLines: Int = Int.MAX_VALUE) {
 	val isByteArray = data is ByteArray
 	val isImageData = data is BMWRemoting.RHMIResourceData && data.type == BMWRemoting.RHMIResourceType.IMAGEDATA
 	val isImageId = data is RHMIResourceIdentifier && data.type == BMWRemoting.RHMIResourceType.IMAGEID
 	if (isByteArray || isImageData || isImageId) {
-		ImageCell(app, data, modifier.heightIn(48.dp, 96.dp))
+		ImageCell(data, modifier.heightIn(48.dp, 96.dp))
 	} else {
 		Text(data?.toString() ?: "", maxLines = maxLines)
 	}

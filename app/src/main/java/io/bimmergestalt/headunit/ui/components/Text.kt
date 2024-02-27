@@ -5,14 +5,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.bimmergestalt.headunit.models.RHMIAppInfo
+import io.bimmergestalt.headunit.ui.screens.LocalTextDB
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 
 @Composable
-fun TextModel(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifier) {
+fun TextModel(model: RHMIModel?, modifier: Modifier = Modifier, textDB: Map<String, Map<Int, String>> = LocalTextDB.current) {
 	if (model is RHMIModel.TextIdModel) {
 
-		val dictionary = app.resources.textDB["en-US"] ?: emptyMap()    // TODO use context locale
+		val dictionary = textDB["en-US"] ?: emptyMap()    // TODO use context locale
 		val textId = model.textId
 		val text = dictionary[textId]
 		if (text != null) {

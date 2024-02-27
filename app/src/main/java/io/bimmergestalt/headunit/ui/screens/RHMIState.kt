@@ -1,5 +1,7 @@
 package io.bimmergestalt.headunit.ui.screens
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
@@ -22,8 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -35,11 +39,12 @@ import io.bimmergestalt.headunit.ui.components.ImageModel
 import io.bimmergestalt.headunit.ui.components.List
 import io.bimmergestalt.headunit.ui.components.TextModel
 import io.bimmergestalt.headunit.ui.components.ToolbarDrawerSheet
+import io.bimmergestalt.headunit.ui.controllers.onClickAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +54,9 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 		navController.popBackStack()
 		return
 	}
+
+	val scope = rememberCoroutineScope()
+	val onClickAction = onClickAction(navController, app)
 
 	DisposableEffect(LocalLifecycleOwner.current) {
 		app.eventHandler(stateId, 1, mapOf(4 to true))  // focus
@@ -60,38 +68,46 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 		}
 	}
 
-	val scope: CoroutineScope = rememberCoroutineScope()
-	Scaffold(
-		topBar = {
-			val title = "${state.id} ${state.getTextModel()?.asRaDataModel()?.value}"
-			TopAppBar(
-				title = { Text(title) },
-				navigationIcon = { IconButton(onClick = {
-					navController.popBackStack()
-				}){
-					Icon(Icons.Filled.ArrowBack, contentDescription=null)
-				} }
-			)
-		}
-	) { padding ->
-		if (state is RHMIState.ToolbarState) {
+	CompositionLocalProvider(
+		LocalImageDB provides app.resources.imageDB,
+		LocalTextDB provides app.resources.textDB
+	) {
 
-			val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-			ModalNavigationDrawer(
-				drawerState = drawerState,
-				drawerContent = {
-					ToolbarDrawerSheet(
-						app = app,
-						state = state,
-						drawerState = drawerState,
-						onClickAction = { _, _ -> }
-					)
-				}
-			) {
-				RHMIStateBody(Modifier.padding(padding), app = app, state = state, onClickAction = { _, _ -> })
+		Scaffold(
+			topBar = {
+				val title = "${state.id} ${state.getTextModel()?.asRaDataModel()?.value}"
+				TopAppBar(
+					title = { Text(title) },
+					navigationIcon = { IconButton(onClick = {
+						navController.popBackStack()
+					}){
+						Icon(Icons.Filled.ArrowBack, contentDescription=null)
+					} }
+				)
 			}
-		} else {
-			RHMIStateBody(Modifier.padding(padding), app = app, state = state, onClickAction = { _, _ -> })
+		) { padding ->
+			if (state is RHMIState.ToolbarState) {
+
+				val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+				ModalNavigationDrawer(
+					drawerState = drawerState,
+					drawerContent = {
+						ToolbarDrawerSheet(
+							state = state,
+							drawerState = drawerState,
+							onClickAction = { scope.launch { onClickAction(it, null) } }
+						)
+					}
+				) {
+					RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
+						onClickAction(action, args)
+					} }
+				}
+			} else {
+				RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
+					onClickAction(action, args)
+				} }
+			}
 		}
 	}
 }
@@ -101,7 +117,7 @@ internal inline fun Map<Int, RHMIProperty>.applyAsInt(property: RHMIProperty.Pro
 }
 
 @Composable
-fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClickAction: suspend (RHMIAppInfo, RHMIAction?) -> Unit) {
+fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val windowWidth = LocalConfiguration.current.screenWidthDp
 	val layout = if (windowWidth > 700) 0 else 1
 
@@ -128,7 +144,7 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 }
 
 @Composable
-fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAction: suspend (RHMIAppInfo, RHMIAction?) -> Unit) {
+fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val visible = component.properties[RHMIProperty.PropertyId.VISIBLE.id]?.getForLayout(layout) != false
 	val position = component.properties[RHMIProperty.PropertyId.POSITION_X.id]?.getForLayout(layout) as? Int
 	val offScreen = (position ?: 0) > 1950
@@ -148,12 +164,15 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAc
 		}
 
 		when (component) {
-			is RHMIComponent.Label -> TextModel(app = app, model = component.getModel(), modifier = modifier)
-			is RHMIComponent.Button -> TextModel(app = app, model = component.getModel(), modifier = modifier)
+			is RHMIComponent.Label -> TextModel(model = component.getModel(), modifier = modifier)
+			is RHMIComponent.Button -> TextModel(model = component.getModel(), modifier = modifier.clickable { onClickAction(component.getAction(), null) })
 			is RHMIComponent.Separator -> Divider(modifier = modifier)
-			is RHMIComponent.Image -> ImageModel(app = app, model = component.getModel(), modifier = modifier)
-			is RHMIComponent.List -> List(app = app, component = component, modifier = modifier)
-			is RHMIComponent.Gauge -> Gauge(app = app, model = component.getModel(), modifier = modifier)
+			is RHMIComponent.Image -> ImageModel(model = component.getModel(), modifier = modifier)
+			is RHMIComponent.List -> List(component = component, modifier = modifier, onClickAction = onClickAction)
+			is RHMIComponent.Gauge -> Gauge(model = component.getModel(), modifier = modifier)
 		}
 	}
 }
+
+val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, Bitmap>() }
+val LocalTextDB = staticCompositionLocalOf { emptyMap<String, Map<Int, String>>() }

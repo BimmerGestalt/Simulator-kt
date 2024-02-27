@@ -7,7 +7,7 @@ import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 @Composable
-fun Gauge(app: RHMIAppInfo, model: RHMIModel?, modifier: Modifier = Modifier) {
+fun Gauge(model: RHMIModel?, modifier: Modifier = Modifier) {
 	if (model is RHMIModel.RaIntModel) {
 		Slider(value = model.value.toFloat(), valueRange = 0f .. 100f, onValueChange = { }, modifier = modifier)
 	}
