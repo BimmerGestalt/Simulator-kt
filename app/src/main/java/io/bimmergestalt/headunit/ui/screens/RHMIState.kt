@@ -29,6 +29,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -174,5 +175,5 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAc
 	}
 }
 
-val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, Bitmap>() }
+val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, ImageBitmap>() }
 val LocalTextDB = staticCompositionLocalOf { emptyMap<String, Map<Int, String>>() }

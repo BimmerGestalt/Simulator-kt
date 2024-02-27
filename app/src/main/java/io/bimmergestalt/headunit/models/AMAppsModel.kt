@@ -1,13 +1,13 @@
 package io.bimmergestalt.headunit.models
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.ui.graphics.ImageBitmap
 
-data class AMAppInfo (
+data class AMAppInfo(
 	val handle: Long,
 	val appId: String,
 	val name: String,
-	val icon: Bitmap,
+	val icon: ImageBitmap,
 	val category: String,
 	val onClick: () -> Unit
 )

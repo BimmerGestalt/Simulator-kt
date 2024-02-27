@@ -85,7 +85,7 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
 	) {
-		Image(app.icon.asImageBitmap(), null, modifier = Modifier
+		Image(app.icon, null, modifier = Modifier
 			.padding(4.dp)
 			.size(32.dp))
 		Text(app.name, style = MaterialTheme.typography.headlineSmall)
