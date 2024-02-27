@@ -29,6 +29,8 @@ class RHMIManager(val state: RHMIApps) {
 		if (existing != null) {
 			throw BMWRemoting.IllegalArgumentException(-1, "RHMI App already registered")
 		}
+
+		Log.w(TAG, "Parsing $appId resources")
 		val resources = try {
 			RHMIResources.loadResources(resourceData)
 		} catch (e: Exception) {

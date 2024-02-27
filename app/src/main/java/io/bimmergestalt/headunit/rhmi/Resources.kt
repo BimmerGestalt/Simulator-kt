@@ -1,11 +1,9 @@
 package io.bimmergestalt.headunit.rhmi
 
-import android.graphics.Bitmap
 import android.util.Log
-import androidx.compose.ui.graphics.ImageBitmap
 import de.bmw.idrive.BMWRemoting
+import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.utils.decodeAndCacheImage
-import io.bimmergestalt.headunit.utils.decodeBitmap
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.util.zip.ZipInputStream
@@ -13,7 +11,7 @@ import java.util.zip.ZipInputStream
 data class RHMIResources (
 	val app: RHMIApplicationState,
 	val textDB: Map<String, Map<Int, String>>,
-	val imageDB: Map<Int, ImageBitmap>
+	val imageDB: Map<Int, ImageTintable>
 
 ) {
 	companion object {
@@ -41,7 +39,7 @@ data class RHMIResources (
 				runBlocking { it.value.decodeAndCacheImage(true) }
 			}.filterValues {
 				it != null
-			} as Map<Int, ImageBitmap>
+			} as Map<Int, ImageTintable>
 
 			return RHMIResources(app, textFiles, iconFiles)
 		}

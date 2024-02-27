@@ -3,6 +3,7 @@ package io.bimmergestalt.headunit.ui.components
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,8 @@ import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.ui.controllers.onClickAction
+import io.bimmergestalt.headunit.utils.INVERT_COLOR_FILTER
+import io.bimmergestalt.headunit.utils.INVERT_COLOR_MATRIX
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import kotlinx.coroutines.launch
@@ -85,9 +88,10 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
 	) {
-		Image(app.icon, null, modifier = Modifier
+		Image(app.icon.image, null, modifier = Modifier
 			.padding(4.dp)
-			.size(32.dp))
+			.size(32.dp),
+			colorFilter = if (app.icon.tintable && !isSystemInDarkTheme()) INVERT_COLOR_FILTER else null)
 		Text(app.name, style = MaterialTheme.typography.headlineSmall)
 	}
 }

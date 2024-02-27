@@ -51,7 +51,7 @@ fun AppPreview() {
 
 @Composable
 fun Contents() {
-	HeadunitktTheme {
+	HeadunitktTheme(dynamicColor = false) {
 		Surface(
 			modifier = Modifier.fillMaxSize(),
 			color = MaterialTheme.colorScheme.background

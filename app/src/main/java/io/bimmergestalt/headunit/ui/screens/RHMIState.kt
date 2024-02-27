@@ -1,6 +1,5 @@
 package io.bimmergestalt.headunit.ui.screens
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,11 +28,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.ui.components.Gauge
 import io.bimmergestalt.headunit.ui.components.ImageModel
@@ -175,5 +174,5 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAc
 	}
 }
 
-val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, ImageBitmap>() }
+val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, ImageTintable>() }
 val LocalTextDB = staticCompositionLocalOf { emptyMap<String, Map<Int, String>>() }

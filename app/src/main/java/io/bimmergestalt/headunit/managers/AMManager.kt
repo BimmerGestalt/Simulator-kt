@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageBitmapConfig
 import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMApps
+import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.utils.decodeAndCacheImage
 import kotlinx.coroutines.runBlocking
 
@@ -28,9 +29,9 @@ class AMManager(val state: AMApps) {
 		if (existing != null && existing.category != category) {
 			throw BMWRemoting.IllegalArgumentException(-1, "AM AppId already registered")
 		}
-		Log.i(TAG, "Starting to parse appInfo")
+		Log.i(TAG, "Starting to parse appInfo for $appId")
 		val icon = runBlocking {
-			iconData.decodeAndCacheImage(false) ?: ImageBitmap(8, 48, ImageBitmapConfig.Rgb565)
+			iconData.decodeAndCacheImage(true) ?: ImageTintable(ImageBitmap(8, 48, ImageBitmapConfig.Rgb565), false)
 		}
 		val appInfo = AMAppInfo(handle.toLong(), appId, name, icon, category) {
 			onAppEvent(appId)

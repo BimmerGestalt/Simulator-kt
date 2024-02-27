@@ -7,17 +7,20 @@ import io.bimmergestalt.headunit.utils.decodeBitmap
 import io.github.reactivecircus.cache4k.Cache
 import java.security.MessageDigest
 
+data class ImageTintable(val image: ImageBitmap, val tintable: Boolean)
 object ImageCache {
-	private val cache = Cache.Builder<Long, ImageBitmap>().build()
+	private val cache = Cache.Builder<Long, ImageTintable>().build()
 
 	/**
 	 * storeInCache should be set for ImageDB images
 	 */
-	suspend fun decodeImageBitmap(data: ByteArray, storeInCache: Boolean = false): ImageBitmap? {
+	suspend fun decodeImageBitmap(data: ByteArray, storeInCache: Boolean = false): ImageTintable? {
 		if (data.size > 75000) {
 			println("ImageCache ignoring too big ${data.size}")
-			return data.decodeBitmap()?.asImageBitmap()?.apply {
+			return data.decodeBitmap()?.bitmap?.asImageBitmap()?.apply {
 				prepareToDraw()
+			}?.let {
+				ImageTintable(it, false)
 			}
 		}
 		val hash = MessageDigest.getInstance("MD5").digest(data)
@@ -36,15 +39,17 @@ object ImageCache {
 		}
 		return if (storeInCache) {
 			cache.get(key) {
-				data.decodeBitmap()?.asImageBitmap()?.apply {
+				val bitmapInfo = data.decodeBitmap()
+				val image = bitmapInfo?.bitmap?.asImageBitmap()?.apply {
 					prepareToDraw()
 				} ?: ImageBitmap(1, 1, ImageBitmapConfig.Rgb565)
+				ImageTintable(image, bitmapInfo?.tintable ?: false)
 			}
 		} else {
 			cache.get(key) ?:
-			data.decodeBitmap()?.asImageBitmap()?.apply {
+			data.decodeBitmap()?.bitmap?.asImageBitmap()?.apply {
 				prepareToDraw()
-			}
+			}?.let { ImageTintable(it, false) }
 		}
 	}
 }
