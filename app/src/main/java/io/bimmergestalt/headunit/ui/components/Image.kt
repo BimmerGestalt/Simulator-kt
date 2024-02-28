@@ -4,14 +4,15 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import de.bmw.idrive.BMWRemoting
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.ui.screens.LocalImageDB
-import io.bimmergestalt.headunit.utils.INVERT_COLOR_FILTER
 import io.bimmergestalt.headunit.utils.decodeBitmap
+import io.bimmergestalt.headunit.utils.tintFilter
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 @Composable
@@ -57,7 +58,7 @@ fun ImageBitmapNullable(image: ImageTintable?, contentDescription: String?, modi
 	if (image != null) {
 		Image(image.image, contentDescription,
 			modifier = modifier,
-			colorFilter = if (image.tintable && !isSystemInDarkTheme()) INVERT_COLOR_FILTER else null)
+			colorFilter = if (image.tintable) tintFilter(MaterialTheme.colorScheme.primary, !isSystemInDarkTheme()) else null)
 	} else {
 		Box(modifier = modifier)
 	}

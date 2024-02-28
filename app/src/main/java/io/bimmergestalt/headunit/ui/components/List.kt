@@ -3,6 +3,7 @@ package io.bimmergestalt.headunit.ui.components
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -50,7 +51,7 @@ fun Cell(data: Any?, modifier: Modifier = Modifier, maxLines: Int = Int.MAX_VALU
 	if (isByteArray || isImageData || isImageId) {
 		ImageCell(data, modifier.heightIn(48.dp, 96.dp))
 	} else {
-		Text(data?.toString() ?: "", maxLines = maxLines)
+		Text(data?.toString() ?: "", maxLines = maxLines, color = MaterialTheme.colorScheme.primary)
 	}
 }
 

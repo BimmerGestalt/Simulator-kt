@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,15 +17,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.bimmergestalt.headunit.bcl.ServerService
 import io.bimmergestalt.headunit.models.RHMIAppsModel
+import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.ui.screens.Main
 import io.bimmergestalt.headunit.ui.screens.RHMIState
 import io.bimmergestalt.headunit.ui.screens.Screens
+import io.bimmergestalt.headunit.ui.screens.Settings
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
 import io.bimmergestalt.headunit.utils.LaunchedEffectAndCollect
 import io.bimmergestalt.headunit.utils.asEtchInt
@@ -51,7 +54,9 @@ fun AppPreview() {
 
 @Composable
 fun Contents() {
-	HeadunitktTheme(dynamicColor = false) {
+	val themeViewModel: ThemeSettings = viewModel()
+	HeadunitktTheme(colorTheme = themeViewModel.colorTheme.value,
+		darkTheme = themeViewModel.darkMode.value ?: isSystemInDarkTheme()) {
 		Surface(
 			modifier = Modifier.fillMaxSize(),
 			color = MaterialTheme.colorScheme.background
@@ -63,7 +68,7 @@ fun Contents() {
 					Main(navController)
 				}
 				composable(route = Screens.Settings.route) {
-					Text("Settings")
+					Settings(themeViewModel)
 				}
 				composable(route = Screens.RHMIState.route,
 					enterTransition = {
