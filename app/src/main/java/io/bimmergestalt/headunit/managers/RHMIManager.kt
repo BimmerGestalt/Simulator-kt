@@ -117,10 +117,10 @@ class RHMIManager(val state: RHMIApps) {
 		// perhaps type validation should be done?
 		// but then Kotlin would need to know
 		// or an error callback needs to be handled from Dart
-		state.knownApps[appId]?.resources?.app?.modelStates?.put(modelId, value?.asEtchIntOrAny())
+		state.knownApps[appId]?.resources?.app?.setModel(modelId, value?.asEtchIntOrAny())
 	}
 	fun setProperty(appId: String, componentId: Int, propertyId: Int, value: Any?) {
-		state.knownApps[appId]?.resources?.app?.propertyStates?.get(componentId)?.put(propertyId, value)
+		state.knownApps[appId]?.resources?.app?.setProperty(componentId, propertyId, value)
 	}
 	fun triggerEvent(appId: String, eventId: Int, args: Map<Int, Any?>) {
 		Log.i(TAG, "Triggering event $appId $eventId")

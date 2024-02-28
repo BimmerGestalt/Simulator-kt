@@ -36,10 +36,11 @@ class RHMIApplicationState(): RHMIApplication() {
 
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
 		runBlocking(handler.asCoroutineDispatcher()) {
-			propertyStates[componentId]!![propertyId] = value
+			propertyStates.getOrPut(componentId) { mutableStateMapOf() }[propertyId] = value
 		}
 	}
-	override fun getProperty(componentId: Int, propertyId: Int): Any? = propertyStates[componentId]!![propertyId]
+	override fun getProperty(componentId: Int, propertyId: Int): Any? =
+		propertyStates.getOrPut(componentId){ mutableStateMapOf() }[propertyId]
 
 	override fun triggerHMIEvent(eventId: Int, args: Map<Any, Any?>) {
 		TODO("Not yet implemented")
