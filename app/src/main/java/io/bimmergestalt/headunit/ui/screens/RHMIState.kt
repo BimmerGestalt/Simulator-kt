@@ -40,6 +40,7 @@ import io.bimmergestalt.headunit.ui.components.List
 import io.bimmergestalt.headunit.ui.components.TextModel
 import io.bimmergestalt.headunit.ui.components.ToolbarDrawerSheet
 import io.bimmergestalt.headunit.ui.controllers.onClickAction
+import io.bimmergestalt.headunit.utils.asBoolean
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
@@ -145,7 +146,7 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 
 @Composable
 fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
-	val visible = component.properties[RHMIProperty.PropertyId.VISIBLE.id]?.getForLayout(layout) != false
+	val visible = component.properties[RHMIProperty.PropertyId.VISIBLE.id]?.getForLayout(layout)?.asBoolean() != false
 	val position = component.properties[RHMIProperty.PropertyId.POSITION_X.id]?.getForLayout(layout) as? Int
 	val offScreen = (position ?: 0) > 1950
 	if (visible && !offScreen) {
