@@ -9,6 +9,8 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.runBlocking
 
 
 class RHMIApplicationState(): RHMIApplication() {
@@ -22,8 +24,8 @@ class RHMIApplicationState(): RHMIApplication() {
 	val modelStates = mutableStateMapOf<Int, Any?>()
 	val propertyStates = HashMap<Int, MutableMap<Int, Any?>>().withDefault { mutableStateMapOf() }
 
-	override fun setModel(modelId: Int, value: Any) {
-		handler.post {
+	override fun setModel(modelId: Int, value: Any?) {
+		runBlocking(handler.asCoroutineDispatcher()) {
 			modelStates[modelId] = value
 		}
 	}
@@ -33,7 +35,7 @@ class RHMIApplicationState(): RHMIApplication() {
 
 
 	override fun setProperty(componentId: Int, propertyId: Int, value: Any?) {
-		handler.post {
+		runBlocking(handler.asCoroutineDispatcher()) {
 			propertyStates[componentId]!![propertyId] = value
 		}
 	}
