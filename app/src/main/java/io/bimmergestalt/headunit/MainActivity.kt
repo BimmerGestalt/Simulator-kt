@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,9 +59,12 @@ fun Contents() {
 	val themeViewModel: ThemeSettings = viewModel()
 	HeadunitktTheme(colorTheme = themeViewModel.colorTheme.value,
 		darkTheme = themeViewModel.darkMode.value ?: isSystemInDarkTheme()) {
+		val background by animateColorAsState(
+			targetValue = MaterialTheme.colorScheme.background,
+			label="Background color")
 		Surface(
 			modifier = Modifier.fillMaxSize(),
-			color = MaterialTheme.colorScheme.background
+			color = background
 		) {
 //		Greeting("Android")
 			val navController = rememberNavController()
