@@ -1,5 +1,6 @@
 package io.bimmergestalt.headunit.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -36,6 +37,10 @@ fun Main(navController: NavController) {
 
 	val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 	val scope = rememberCoroutineScope()
+
+	BackHandler(enabled = drawerState.isOpen) {
+		scope.launch { drawerState.close() }
+	}
 	ModalNavigationDrawer(
 		drawerState = drawerState,
 		drawerContent = { ModalDrawerSheet {
