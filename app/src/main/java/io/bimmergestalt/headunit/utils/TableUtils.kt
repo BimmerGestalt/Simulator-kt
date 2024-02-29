@@ -27,6 +27,9 @@ fun RHMIDataTable.isWithin(table: RHMIDataTable): Boolean {
 fun RHMIDataTable.overlaps(table: RHMIDataTable): Boolean {
 	return (this.fromRow <= table.fromRow && this.lastRow >= table.lastRow)
 }
+fun RHMIDataTable.isSameSize(table: RHMIDataTable): Boolean {
+	return (this.totalRows == table.totalRows && this.totalColumns == table.totalColumns)
+}
 
 /**
  * Update this table to include the new table data

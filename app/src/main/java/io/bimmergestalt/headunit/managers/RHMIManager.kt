@@ -12,10 +12,12 @@ import io.bimmergestalt.headunit.models.RHMIApps
 import io.bimmergestalt.headunit.models.RHMIEvent
 import io.bimmergestalt.headunit.rhmi.RHMIResources
 import io.bimmergestalt.headunit.utils.asEtchIntOrAny
+import io.bimmergestalt.headunit.utils.isSameSize
 import io.bimmergestalt.headunit.utils.merge
 import io.bimmergestalt.headunit.utils.overlaps
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import java.util.Collections.max
 import java.util.concurrent.ConcurrentHashMap
 
 class RHMIManager(val state: RHMIApps) {
@@ -79,50 +81,15 @@ class RHMIManager(val state: RHMIApps) {
 	fun removeEventHandler(handle: Int) {
 		eventHandlers.remove(handle)
 	}
-/*
-	private fun simplifyData(value: Any?): Any? {
-		return when (value) {
-			is RHMIDataTable -> {
-				// TODO handle partial table updates :fear:
-				val data = value.data.map { row ->
-					row.map { cell ->
-						simplifyData(cell)
-					}
-				}
-				RHMITableUpdate(totalRows = value.totalRows.toLong(), totalColumns = value.totalColumns.toLong(),
-					startRow = value.fromRow.toLong(), startColumn = value.fromColumn.toLong(),
-					numRows = value.numRows.toLong(), numColumns = value.numColumns.toLong(),
-					data = data
-				)
-			}
-			is RHMIResourceData -> value.data    // assume the destination model is RA
-			is RHMIResourceIdentifier -> if (value.type == RHMIResourceType.IMAGEID) {
-				RHMIImageId(value.id.toLong())
-			} else if (value.type == RHMIResourceType.TEXTID) {
-				RHMITextId(value.id.toLong())
-			} else {
-				value.id
-				// assume the destination model is ID
-			}
-			is Boolean -> value
-			is ByteArray -> value
-			is Number -> value
-			is String -> value
-			null -> null
-			else -> {
-				Log.e(TAG, "Unknown data type $value")
-				null
-			}
-		}
-	}
-*/
+
 	fun setData(appId: String, modelId: Int, value: Any?) {
-		// perhaps type validation should be done?
-		// but then Kotlin would need to know
-		// or an error callback needs to be handled from Dart
 		if (value is RHMIDataTable) {
+			value.numRows = value.data.size // apps can lie about numRows and numCols
+			if (value.data.isNotEmpty()) {
+				value.numColumns = max(value.data.map { it.size })
+			}
 			val existing = state.knownApps[appId]?.resources?.app?.getModel(modelId)
-			if (existing is RHMIDataTable && !value.overlaps(existing)) {
+			if (existing is RHMIDataTable && existing.isSameSize(value) && !value.overlaps(existing)) {
 				try {
 					// create a new object to trigger state tracking
 					val replacement = RHMIDataTable(existing.data, existing.virtualTableEnable,

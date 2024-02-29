@@ -36,18 +36,20 @@ fun List(component: RHMIComponent.List, modifier: Modifier = Modifier,
 	if (model != null) {
 		val listState = rememberLazyListState()
 		if (component.properties[RHMIProperty.PropertyId.VALID.id]?.value?.asBoolean() == false) {
-			val requestedWindow by remember { derivedStateOf {
+			val requestedWindow = remember(model) { derivedStateOf {
 				val firstMod = listState.firstVisibleItemIndex / 10
-					max(0, firstMod - 10) to
+				val window = max(0, firstMod - 10) to
 							min(model.endIndex, firstMod + 30)
+				if ((window.first until window.second).any { model[it].isEmpty() }) {
+					window
+				} else {
+					null
 				}
-			}
-			val preparedWindow = (requestedWindow.first until requestedWindow.second).map {
-				model[it]
-			}
-			if (preparedWindow.any { it.isEmpty() }) {
+			} }
+			val curWindow = requestedWindow.value
+			if (curWindow != null) {
 				LaunchedEffect(requestedWindow) {
-					eventHandler(component.id, 2, mapOf(5 to requestedWindow.first, 6 to requestedWindow.second))
+					eventHandler(component.id, 2, mapOf(5 to curWindow.first, 6 to curWindow.second))
 				}
 			}
 		}
