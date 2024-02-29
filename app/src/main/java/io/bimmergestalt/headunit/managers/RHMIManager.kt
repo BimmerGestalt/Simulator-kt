@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
+import de.bmw.idrive.BMWRemoting.RHMIDataTable
 import de.bmw.idrive.BMWRemoting.RHMIResourceType
 import de.bmw.idrive.BMWRemotingClient
 import io.bimmergestalt.headunit.models.RHMIAppInfo
@@ -11,6 +12,8 @@ import io.bimmergestalt.headunit.models.RHMIApps
 import io.bimmergestalt.headunit.models.RHMIEvent
 import io.bimmergestalt.headunit.rhmi.RHMIResources
 import io.bimmergestalt.headunit.utils.asEtchIntOrAny
+import io.bimmergestalt.headunit.utils.merge
+import io.bimmergestalt.headunit.utils.overlaps
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import java.util.concurrent.ConcurrentHashMap
@@ -117,6 +120,22 @@ class RHMIManager(val state: RHMIApps) {
 		// perhaps type validation should be done?
 		// but then Kotlin would need to know
 		// or an error callback needs to be handled from Dart
+		if (value is RHMIDataTable) {
+			val existing = state.knownApps[appId]?.resources?.app?.getModel(modelId)
+			if (existing is RHMIDataTable && !value.overlaps(existing)) {
+				try {
+					// create a new object to trigger state tracking
+					val replacement = RHMIDataTable(existing.data, existing.virtualTableEnable,
+						existing.fromRow, existing.numRows, existing.totalRows,
+						existing.fromColumn, existing.numColumns, existing.totalColumns)
+					replacement.merge(value)
+					state.knownApps[appId]?.resources?.app?.setModel(modelId, replacement)
+					return
+				} catch (e: IllegalArgumentException) {
+					// unable to merge this table update, just replace like normal
+				}
+			}
+		}
 		state.knownApps[appId]?.resources?.app?.setModel(modelId, value?.asEtchIntOrAny())
 	}
 	fun setProperty(appId: String, componentId: Int, propertyId: Int, value: Any?) {
@@ -125,7 +144,6 @@ class RHMIManager(val state: RHMIApps) {
 	fun triggerEvent(appId: String, eventId: Int, args: Map<Int, Any?>) {
 		Log.i(TAG, "Triggering event $appId $eventId")
 		state.incomingEvents.tryEmit(RHMIEvent(appId, eventId, args))
-//		callbacks.rhmiTriggerEvent(appId, eventId, args)
 	}
 
 	fun onActionEvent(appId: String, actionId: Int, args: Map<*, *>): Deferred<Boolean> {
