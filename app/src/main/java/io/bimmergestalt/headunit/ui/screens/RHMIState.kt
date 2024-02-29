@@ -137,11 +137,11 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 	Box(modifier = modifier.verticalScroll(rememberScrollState())) {
 		Box(modifier = Modifier.sizeIn(10.dp, 10.dp, 1920.dp, 1440.dp)) {
 			absoluteComponents.forEach { component ->
-				Component(app, component, layout, onClickAction)
+				Component(app, component, layout, app.eventHandler, onClickAction)
 			}
 			Column {
 				relativeComponents.forEach { component ->
-					Component(app, component, layout, onClickAction)
+					Component(app, component, layout, app.eventHandler, onClickAction)
 				}
 			}
 		}
@@ -149,7 +149,8 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 }
 
 @Composable
-fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
+fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int,
+              eventHandler: (componentId: Int, eventId: Int, args: Map<*, *>) -> Unit, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val visible = component.properties[RHMIProperty.PropertyId.VISIBLE.id]?.getForLayout(layout)?.asBoolean() != false
 	val position = component.properties[RHMIProperty.PropertyId.POSITION_X.id]?.getForLayout(layout) as? Int
 	val offScreen = (position ?: 0) > 1950
@@ -173,7 +174,7 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int, onClickAc
 			is RHMIComponent.Button -> TextModel(model = component.getModel(), modifier = modifier.clickable { onClickAction(component.getAction(), null) })
 			is RHMIComponent.Separator -> Divider(modifier = modifier)
 			is RHMIComponent.Image -> ImageModel(model = component.getModel(), modifier = modifier)
-			is RHMIComponent.List -> List(component = component, modifier = modifier, onClickAction = onClickAction)
+			is RHMIComponent.List -> List(component = component, modifier = modifier, eventHandler = eventHandler, onClickAction = onClickAction)
 			is RHMIComponent.Gauge -> Gauge(model = component.getModel(), modifier = modifier)
 		}
 	}
