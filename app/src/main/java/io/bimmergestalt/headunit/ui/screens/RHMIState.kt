@@ -109,16 +109,18 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 					} }
 				}
 			} else {
-				RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
-					onClickAction(action, args)
-				} }
+				if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
+					val actionHandler = onClickAction(navController, app, forceAwait = true)
+					val inputState = (state.componentsList[0] as RHMIComponent.Input).viewModel(actionHandler)
+					RHMIInputState(Modifier.padding(padding), inputState)
+				} else {
+					RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
+						onClickAction(action, args)
+					} }
+				}
 			}
 		}
 	}
-}
-
-internal inline fun Map<Int, RHMIProperty>.applyAsInt(property: RHMIProperty.PropertyId, layout: Int, block: (Int) -> Unit) {
-	(this[property.id]?.getForLayout(layout) as? Int)?.apply(block)
 }
 
 @Composable
@@ -146,6 +148,10 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 			}
 		}
 	}
+}
+
+internal inline fun Map<Int, RHMIProperty>.applyAsInt(property: RHMIProperty.PropertyId, layout: Int, block: (Int) -> Unit) {
+	(this[property.id]?.getForLayout(layout) as? Int)?.apply(block)
 }
 
 @Composable

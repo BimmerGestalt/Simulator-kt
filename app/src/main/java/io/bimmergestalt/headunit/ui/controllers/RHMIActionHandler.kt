@@ -9,14 +9,14 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 /**
  * Currying!
  */
-fun onClickAction(navController: NavController, app: RHMIAppInfo): suspend (RHMIAction?, extra: Map<Int, Any>?) -> Unit {
+fun onClickAction(navController: NavController, app: RHMIAppInfo, forceAwait: Boolean = false): suspend (RHMIAction?, extra: Map<Int, Any>?) -> Unit {
 	return { action, args ->
 		if (action != null) {
 			Log.i("ClickAction", "Clicking action $app $action")
 			val raAction = action.asRAAction()
 			if (raAction != null) {
 				val result = app.actionHandler(raAction.id, args ?: emptyMap())
-				if (action is RHMIAction.CombinedAction && action.sync.toBoolean()) {
+				if (forceAwait || (action is RHMIAction.CombinedAction && action.sync.toBoolean())) {
 					result.await()
 				}
 			}
