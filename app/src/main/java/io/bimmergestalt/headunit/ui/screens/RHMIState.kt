@@ -47,6 +47,10 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormatBuilder
+import kotlinx.datetime.format.MonthNames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,9 +81,19 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 
 		Scaffold(
 			topBar = {
-				val title = "${state.id} ${state.getTextModel()?.asRaDataModel()?.value}"
+				val titleText = if (state is RHMIState.CalendarMonthState) {
+					val dateInt = state.getDateModel()?.asRaIntModel()?.value ?: 0
+					dateInt.fromRhmiDate()
+					LocalDate.Format {
+						monthName(MonthNames.ENGLISH_FULL)
+						chars(", ")
+						year()
+					}.format(dateInt.fromRhmiDate())
+				} else {
+					state.getTextModel()?.asRaDataModel()?.value ?: "null"
+				}
 				TopAppBar(
-					title = { Text(title) },
+					title = { Text(titleText) },
 					navigationIcon = { IconButton(onClick = {
 						navController.popBackStack()
 					}){
@@ -109,7 +123,15 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 					} }
 				}
 			} else {
-				if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
+				if (state is RHMIState.CalendarMonthState) {
+					RHMICalendarMonthState(
+						modifier = Modifier.padding(padding),
+						state = state.viewModel(onClickAction)
+					)
+				} else if (state is RHMIState.CalendarState && state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.CalendarDay) {
+					val calendarState = (state.componentsList[0] as RHMIComponent.CalendarDay).viewModel(onClickAction)
+					RHMICalendarState(modifier = Modifier.padding(padding), state = calendarState)
+				} else if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
 					val actionHandler = onClickAction(navController, app, forceAwait = true)
 					val inputState = (state.componentsList[0] as RHMIComponent.Input).viewModel(actionHandler)
 					RHMIInputState(Modifier.padding(padding), inputState)

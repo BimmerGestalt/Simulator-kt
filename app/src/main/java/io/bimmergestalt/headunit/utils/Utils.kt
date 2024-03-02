@@ -9,3 +9,5 @@ fun Any.asBoolean(): Boolean {
 		else -> false
 	}
 }
+
+fun Int.padStart(length: Int, padChar: Char) = this.toString().padStart(length, padChar)

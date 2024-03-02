@@ -1,6 +1,7 @@
 package io.bimmergestalt.headunit.ui.components
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
@@ -15,7 +16,9 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.dp
 
 /**
  * https://stackoverflow.com/a/71665355/169035
@@ -27,7 +30,8 @@ fun Table(
 	verticalLazyListState: LazyListState = rememberLazyListState(),
 	horizontalScrollState: ScrollState = rememberScrollState(),
 	verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-	onClickRow: (rowIndex: Int) -> Unit = {},
+	horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+	onClickRow: ((rowIndex: Int) -> Unit)? = null,
 	columnCount: Int,
 	rowCount: Int,
 	beforeRow: (@Composable (rowIndex: Int) -> Unit)? = null,
@@ -41,10 +45,12 @@ fun Table(
 			items(rowCount) { rowIndex ->
 				Column {
 					beforeRow?.invoke(rowIndex)
-
-					Row(modifier = rowModifier.clickable { onClickRow(rowIndex) }, verticalAlignment = verticalAlignment) {
+					val clickableRowModifier = if (onClickRow != null) {
+						rowModifier.clickable { onClickRow(rowIndex) }
+					} else { rowModifier }
+					Row(modifier = clickableRowModifier, verticalAlignment = verticalAlignment) {
 						(0 until columnCount).forEach { columnIndex ->
-							Box(modifier = Modifier.layout { measurable, constraints ->
+							Box(propagateMinConstraints = true, modifier = Modifier.layout { measurable, constraints ->
 								val placeable = measurable.measure(constraints)
 
 								val existingWidth = columnWidths[columnIndex] ?: 0
@@ -55,7 +61,13 @@ fun Table(
 								}
 
 								layout(width = maxWidth, height = placeable.height) {
-									placeable.placeRelative(0, 0)
+									val start = when(horizontalAlignment) {
+										Alignment.Start -> 0
+										Alignment.CenterHorizontally -> maxWidth/2 - placeable.width/2
+										Alignment.End -> maxWidth - placeable.width
+										else -> 0
+									}
+									placeable.placeRelative(start, 0)
 								}
 							}) {
 								cellContent(columnIndex, rowIndex)

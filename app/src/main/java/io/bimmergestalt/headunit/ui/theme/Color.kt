@@ -16,6 +16,7 @@ val Pink40 = Color(0xFF7D5260)
 // https://www.canva.com/colors/color-palettes/mermaid-lagoon/
 val MidnightBlue = Color(0xFF145da0)
 val DarkBlue = Color(0xFF0c2d48)
+val DarkBlueDesaturated = Color(0xFF223b4d)
 val Blue = Color(0xFF2e8bc0)
 val BabyBlue = Color(0xFFb1d4e0)
 
@@ -38,12 +39,12 @@ data class ColorTheme(val name: String, val light: ColorScheme, val dark: ColorS
 			tertiary = Pink80,
 		))
 		val Lagoon = ColorTheme("Lagoon", lightColorScheme(
-			primary = DarkBlue,
-			secondary = MidnightBlue,
+			primary = MidnightBlue,
+			secondary = DarkBlue,
 			tertiary = Blue,
 		), darkColorScheme(
-			primary = BabyBlue,
-			secondary = Blue,
+			primary = Blue,
+			secondary = DarkBlue,
 			tertiary = MidnightBlue,
 		))
 		val Leaves = ColorTheme("Leaves", lightColorScheme(
