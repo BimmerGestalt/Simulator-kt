@@ -1,14 +1,43 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
-import java.net.URI
 
 plugins {
+	alias(libs.plugins.kotlinMultiplatform)
 	alias(libs.plugins.androidApplication)
-	alias(libs.plugins.kotlinAndroid)
+	alias(libs.plugins.jetbrainsCompose)
+}
+
+kotlin {
+	androidTarget {
+		compilations.all {
+			kotlinOptions {
+				jvmTarget = "1.8"
+			}
+		}
+	}
+
+	sourceSets {
+		androidMain.dependencies {
+			implementation(libs.androidx.activity.compose)
+			implementation(libs.androidx.navigation.compose)
+			implementation(libs.compose.foundation.android)
+			implementation(libs.compose.material3.android)
+			implementation(libs.kotlinx.datetime)
+			implementation(libs.cache4k)
+			implementation(libs.pngj)
+
+			implementation(projects.iDriveConnectKit)
+		}
+		android
+	}
 }
 
 android {
 	namespace = "io.bimmergestalt.headunit"
 	compileSdk = 34
+
+	sourceSets["main"].java.srcDirs("src/androidMain/java")
+	sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
+	sourceSets["main"].res.srcDirs("src/androidMain/res")
 
 	defaultConfig {
 		applicationId = "io.bimmergestalt.headunit"
@@ -36,9 +65,6 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_1_8
 		targetCompatibility = JavaVersion.VERSION_1_8
 	}
-	kotlinOptions {
-		jvmTarget = "1.8"
-	}
 	buildFeatures {
 		compose = true
 	}
@@ -49,6 +75,15 @@ android {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
 		}
+	}
+
+	dependencies {
+		debugImplementation(libs.compose.ui.tooling)
+		debugImplementation(libs.compose.ui.test.manifest)
+		testImplementation(libs.junit)
+		androidTestImplementation(libs.androidx.test.junit)
+		androidTestImplementation(libs.androidx.test.espresso)
+		androidTestImplementation(libs.androidx.test.compose)
 	}
 }
 
@@ -66,49 +101,3 @@ gradle.taskGraph.whenReady(closureOf<TaskExecutionGraph> {
 		}
 	}
 })
-
-dependencies {
-
-	implementation(libs.androidx.activity.compose)
-	implementation(libs.androidx.navigation.compose)
-	implementation(libs.compose.foundation.android)
-	implementation(libs.compose.material3.android)
-	implementation(libs.kotlinx.datetime)
-	implementation(libs.cache4k)
-	implementation(libs.pngj)
-	debugImplementation(libs.compose.ui.tooling)
-	debugImplementation(libs.compose.ui.test.manifest)
-	testImplementation(libs.kotlin.test)
-	androidTestImplementation(libs.androidx.test.junit)
-	androidTestImplementation(libs.androidx.test.espresso)
-	androidTestImplementation(libs.androidx.test.compose)
-
-	implementation(projects.iDriveConnectKit)
-
-	/*
-	implementation("androidx.core:core-ktx:1.12.0")
-	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-	implementation("androidx.activity:activity-compose:1.8.2")
-	implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-	implementation("androidx.compose.foundation:foundation:1.6.2")
-	implementation("androidx.compose.ui:ui")
-	implementation("androidx.compose.ui:ui-graphics")
-	implementation("androidx.compose.ui:ui-tooling-preview")
-	implementation("androidx.compose.material3:material3")
-	implementation("androidx.navigation:navigation-compose:2.7.7")
-	implementation("ar.com.hjg:pngj:2.1.0")
-	implementation("io.github.reactivecircus.cache4k:cache4k:0.13.0")
-	implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0-RC.2")
-	testImplementation("junit:junit:4.13.2")
-	androidTestImplementation("androidx.test.ext:junit:1.1.5")
-	androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-	androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-	androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-	debugImplementation("androidx.compose.ui:ui-tooling")
-	debugImplementation("androidx.compose.ui:ui-test-manifest")
-	 */
-
-//	implementation("io.bimmergestalt:IDriveConnectKit:0.6")
-	implementation(project(":IDriveConnectKit"))
-}

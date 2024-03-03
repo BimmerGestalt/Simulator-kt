@@ -28,6 +28,7 @@ cache4k = { module = "io.github.reactivecircus.cache4k:cache4k", version="0.13.0
 pngj = { module = "ar.com.hjg:pngj", version = "2.1.0" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 
+junit = { module = "junit:junit", version = "4.12" }
 androidx-test-junit = { module = "androidx.test.ext:junit", version = "1.1.5" }
 androidx-test-espresso = { module = "androidx.test.espresso:espresso-core", version = "3.5.1" }
 androidx-test-compose = { module = "androidx.compose.ui:ui-test-junit4", version = "1.6.2" }
