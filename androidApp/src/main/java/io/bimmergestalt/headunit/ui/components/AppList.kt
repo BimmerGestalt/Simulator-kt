@@ -102,7 +102,7 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 }
 
 @Composable
-fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onClickAction: (RHMIAction?) -> Unit) {
+fun RHMIAppEntry(app: io.bimmergestalt.headunit.models.RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onClickAction: (RHMIAction?) -> Unit) {
 	Row(verticalAlignment = Alignment.CenterVertically,
 		modifier = Modifier
 			.clickable { onClickAction(entryButton.getAction()) }

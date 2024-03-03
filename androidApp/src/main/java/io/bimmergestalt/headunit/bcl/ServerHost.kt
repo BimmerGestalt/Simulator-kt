@@ -3,8 +3,6 @@ package io.bimmergestalt.headunit.bcl
 import de.bmw.idrive.BMWRemotingHelper
 import de.bmw.idrive.BMWRemotingServer
 import de.bmw.idrive.RemoteBMWRemotingClient
-import io.bimmergestalt.headunit.managers.AMManager
-import io.bimmergestalt.headunit.managers.RHMIManager
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppsModel
 import org.apache.etch.bindings.java.support.ServerFactory

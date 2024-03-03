@@ -1,5 +1,7 @@
 import java.net.URI
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
 	repositories {
 		google()
@@ -18,4 +20,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Headunit-kt"
 include(":app")
+include(":androidApp")
 include(":IDriveConnectKit")

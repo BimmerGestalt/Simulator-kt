@@ -3,7 +3,6 @@ package io.bimmergestalt.headunit.ui.components
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 @Composable

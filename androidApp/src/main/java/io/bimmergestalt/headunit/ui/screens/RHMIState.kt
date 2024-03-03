@@ -54,7 +54,7 @@ import kotlinx.datetime.format.MonthNames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
+fun RHMIState(navController: NavController, app: io.bimmergestalt.headunit.models.RHMIAppInfo, stateId: Int) {
 	val state = app.resources.app.states[stateId]
 	if (state == null) {
 		navController.popBackStack()
@@ -62,7 +62,8 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 	}
 
 	val scope = rememberCoroutineScope()
-	val onClickAction = onClickAction(navController, app)
+	val onClickAction =
+		onClickAction(navController, app)
 
 	DisposableEffect(LocalLifecycleOwner.current) {
 		app.eventHandler(stateId, 1, mapOf(4 to true))  // focus
@@ -146,7 +147,7 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 }
 
 @Composable
-fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
+fun RHMIStateBody(modifier: Modifier, app: io.bimmergestalt.headunit.models.RHMIAppInfo, state: RHMIState, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val windowWidth = LocalConfiguration.current.screenWidthDp
 	val layout = if (windowWidth > 700) 0 else 1
 
@@ -177,7 +178,7 @@ internal inline fun Map<Int, RHMIProperty>.applyAsInt(property: RHMIProperty.Pro
 }
 
 @Composable
-fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int,
+fun Component(app: io.bimmergestalt.headunit.models.RHMIAppInfo, component: RHMIComponent, layout: Int,
               eventHandler: (componentId: Int, eventId: Int, args: Map<*, *>) -> Unit, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
 	val visible = component.properties[RHMIProperty.PropertyId.VISIBLE.id]?.getForLayout(layout)?.asBoolean() != false
 	val position = component.properties[RHMIProperty.PropertyId.POSITION_X.id]?.getForLayout(layout) as? Int
@@ -198,12 +199,28 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int,
 		}
 
 		when (component) {
-			is RHMIComponent.Label -> TextModel(model = component.getModel(), modifier = modifier)
-			is RHMIComponent.Button -> TextModel(model = component.getModel(), modifier = modifier.clickable { onClickAction(component.getAction(), null) })
+			is RHMIComponent.Label -> io.bimmergestalt.headunit.ui.components.TextModel(
+				model = component.getModel(),
+				modifier = modifier
+			)
+			is RHMIComponent.Button -> io.bimmergestalt.headunit.ui.components.TextModel(
+				model = component.getModel(),
+				modifier = modifier.clickable { onClickAction(component.getAction(), null) })
 			is RHMIComponent.Separator -> Divider(modifier = modifier)
-			is RHMIComponent.Image -> ImageModel(model = component.getModel(), modifier = modifier)
-			is RHMIComponent.List -> List(component = component, modifier = modifier, eventHandler = eventHandler, onClickAction = onClickAction)
-			is RHMIComponent.Gauge -> Gauge(model = component.getModel(), modifier = modifier)
+			is RHMIComponent.Image -> io.bimmergestalt.headunit.ui.components.ImageModel(
+				model = component.getModel(),
+				modifier = modifier
+			)
+			is RHMIComponent.List -> io.bimmergestalt.headunit.ui.components.List(
+				component = component,
+				modifier = modifier,
+				eventHandler = eventHandler,
+				onClickAction = onClickAction
+			)
+			is RHMIComponent.Gauge -> io.bimmergestalt.headunit.ui.components.Gauge(
+				model = component.getModel(),
+				modifier = modifier
+			)
 		}
 	}
 }

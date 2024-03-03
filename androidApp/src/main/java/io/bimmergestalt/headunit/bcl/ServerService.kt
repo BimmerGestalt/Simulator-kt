@@ -85,7 +85,8 @@ class ServerService: Service() {
 	}
 	private fun createNotificationChannel() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val channel = NotificationChannel(NOTIFICATION_CHANNEL_ID,
+			val channel = NotificationChannel(
+				NOTIFICATION_CHANNEL_ID,
 				getString(R.string.notification_channel_connection),
 				NotificationManager.IMPORTANCE_MIN)
 
@@ -95,7 +96,7 @@ class ServerService: Service() {
 	}
 
 	private fun startServiceNotification() {
-		val notifyIntent = Intent(applicationContext, MainActivity::class.java).apply {
+		val notifyIntent = Intent(applicationContext, io.bimmergestalt.headunit.MainActivity::class.java).apply {
 			flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
 		}
 		val shutdownIntent = Intent(applicationContext, ServerService::class.java).apply {

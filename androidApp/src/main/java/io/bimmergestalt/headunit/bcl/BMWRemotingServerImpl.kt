@@ -4,8 +4,6 @@ import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemotingClient
 import de.bmw.idrive.BaseBMWRemotingServer
-import io.bimmergestalt.headunit.managers.AMManager
-import io.bimmergestalt.headunit.managers.RHMIManager
 import org.apache.etch.util.core.io.Session
 
 class BMWRemotingServerImpl(val client: BMWRemotingClient,
