@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/IDriveConnectKit" />
             <option value="$PROJECT_DIR$/androidApp" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/webApp" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

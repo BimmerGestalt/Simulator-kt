@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 rootProject.name = "Headunit-kt"
 include(":app")
 include(":androidApp")
+include(":webApp")
 include(":IDriveConnectKit")

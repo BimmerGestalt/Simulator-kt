@@ -2,21 +2,23 @@
 agp = "8.2.1"
 coreKtx = "1.12.0"
 kotlin = "1.9.20"
-compose = "1.6.2"
+compose-plugin = "1.6.0"
+androidx-compose = "1.6.2"
 compose-material3 = "1.2.0"
 androidx-activityCompose = "1.8.2"
 androidx-navigationCompose = "2.7.7"
 navigationRuntimeKtx = "2.7.7"
+org-jetbrains-kotlin-jvm = "1.9.20"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
-compose-foundation-android = { module = "androidx.compose.foundation:foundation-android", version.ref = "compose" }
+compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "androidx-compose" }
+compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
+compose-foundation-android = { module = "androidx.compose.foundation:foundation-android", version.ref = "androidx-compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 compose-material3-android = { module = "androidx.compose.material3:material3-android", version.ref = "compose-material3" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -33,3 +35,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = "kotlin" }
+org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "org-jetbrains-kotlin-jvm" }
+jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin"}

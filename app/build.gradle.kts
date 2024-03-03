@@ -1,4 +1,6 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.net.URI
 
 plugins {
@@ -15,6 +17,25 @@ kotlin {
 		}
 	}
 
+
+	@OptIn(ExperimentalWasmDsl::class)
+	wasmJs {
+		moduleName = "app"
+		browser {
+			commonWebpackConfig {
+				outputFileName = "headunit-app.js"
+				devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+					static = (static ?: mutableListOf()).apply {
+						// Serve sources to debug inside browser
+						add(project.projectDir.path)
+						add(project.projectDir.path + "/commonMain/")
+						add(project.projectDir.path + "/wasmJsMain/")
+					}
+				}
+			}
+		}
+		binaries.executable()
+	}
 	sourceSets {
 		commonMain.dependencies {
 			//put your multiplatform dependencies here
