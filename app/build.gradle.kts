@@ -1,4 +1,8 @@
 import com.android.build.gradle.internal.tasks.factory.dependsOn
+import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
 
 plugins {
 	alias(libs.plugins.kotlinMultiplatform)
@@ -15,6 +19,25 @@ kotlin {
 		}
 	}
 
+	@OptIn(ExperimentalWasmDsl::class)
+	wasmJs {
+		moduleName = "app"
+		browser {
+			commonWebpackConfig {
+				outputFileName = "app.js"
+				devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+					static = (static ?: mutableListOf()).apply {
+						// Serve sources to debug inside browser
+						add(project.projectDir.path)
+						add(project.projectDir.path + "/commonMain/")
+						add(project.projectDir.path + "/wasmJsMain/")
+					}
+				}
+			}
+		}
+		binaries.executable()
+	}
+
 	sourceSets {
 		androidMain.dependencies {
 			implementation(libs.androidx.activity.compose)
@@ -27,7 +50,15 @@ kotlin {
 
 			implementation(projects.iDriveConnectKit)
 		}
-		android
+
+		commonMain.dependencies {
+			implementation(compose.runtime)
+			implementation(compose.foundation)
+			implementation(compose.material)
+			implementation(compose.ui)
+			@OptIn(ExperimentalComposeLibrary::class)
+			implementation(compose.components.resources)
+		}
 	}
 }
 
@@ -85,6 +116,10 @@ android {
 		androidTestImplementation(libs.androidx.test.espresso)
 		androidTestImplementation(libs.androidx.test.compose)
 	}
+}
+
+compose.experimental {
+	web.application {}
 }
 
 tasks.named("preBuild").dependsOn(":IDriveConnectKit:compileEtch")
