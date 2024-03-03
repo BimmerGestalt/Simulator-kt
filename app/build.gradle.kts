@@ -2,8 +2,8 @@ import com.android.build.gradle.internal.tasks.factory.dependsOn
 import java.net.URI
 
 plugins {
-	id("com.android.application")
-	id("org.jetbrains.kotlin.android")
+	alias(libs.plugins.androidApplication)
+	alias(libs.plugins.kotlinAndroid)
 }
 
 android {
@@ -43,7 +43,7 @@ android {
 		compose = true
 	}
 	composeOptions {
-		kotlinCompilerExtensionVersion = "1.5.1"
+		kotlinCompilerExtensionVersion = "1.5.4"
 	}
 	packaging {
 		resources {
@@ -69,6 +69,23 @@ gradle.taskGraph.whenReady(closureOf<TaskExecutionGraph> {
 
 dependencies {
 
+	implementation(libs.androidx.activity.compose)
+	implementation(libs.androidx.navigation.compose)
+	implementation(libs.compose.foundation.android)
+	implementation(libs.compose.material3.android)
+	implementation(libs.kotlinx.datetime)
+	implementation(libs.cache4k)
+	implementation(libs.pngj)
+	debugImplementation(libs.compose.ui.tooling)
+	debugImplementation(libs.compose.ui.test.manifest)
+	testImplementation(libs.kotlin.test)
+	androidTestImplementation(libs.androidx.test.junit)
+	androidTestImplementation(libs.androidx.test.espresso)
+	androidTestImplementation(libs.androidx.test.compose)
+
+	implementation(projects.iDriveConnectKit)
+
+	/*
 	implementation("androidx.core:core-ktx:1.12.0")
 	implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
 	implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
@@ -90,6 +107,7 @@ dependencies {
 	androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 	debugImplementation("androidx.compose.ui:ui-tooling")
 	debugImplementation("androidx.compose.ui:ui-test-manifest")
+	 */
 
 //	implementation("io.bimmergestalt:IDriveConnectKit:0.6")
 	implementation(project(":IDriveConnectKit"))
