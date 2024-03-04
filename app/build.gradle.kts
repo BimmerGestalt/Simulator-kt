@@ -44,7 +44,6 @@ kotlin {
 			implementation(libs.androidx.navigation.compose)
 			implementation(libs.compose.foundation.android)
 			implementation(libs.compose.material3.android)
-			implementation(libs.kotlinx.datetime)
 			implementation(libs.cache4k)
 			implementation(libs.pngj)
 
@@ -58,10 +57,14 @@ kotlin {
 			implementation(compose.ui)
 			@OptIn(ExperimentalComposeLibrary::class)
 			implementation(compose.components.resources)
+
+			implementation(libs.kotlinx.datetime)
 			implementation(libs.voyager.navigator)
 			implementation(libs.voyager.screenModel)
 			implementation(libs.voyager.tabNavigator)
 			implementation(libs.voyager.transitions)
+
+			implementation(compose.components.uiToolingPreview)
 		}
 	}
 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import io.bimmergestalt.headunit.apps.calendar.CalendarApp
 
 object MainScreen: Screen {
 	@Composable
@@ -15,8 +16,11 @@ object MainScreen: Screen {
 		val navigator = LocalNavigator.currentOrThrow
 		Column {
 			Text("It works!", color = MaterialTheme.colorScheme.onBackground)
+			Button(onClick = {navigator.push(CalendarApp)}) {
+				Text("Calendar", color = MaterialTheme.colorScheme.onPrimaryContainer)
+			}
 			Button(onClick = {navigator.push(SettingsScreen)}) {
-				Text("Settings", color = MaterialTheme.colorScheme.onBackground)
+				Text("Settings", color = MaterialTheme.colorScheme.onPrimaryContainer)
 			}
 		}
 	}

@@ -17,12 +17,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.ui.theme.ColorTheme
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
@@ -34,6 +34,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 /**
  * Contains much inspiration from https://github.com/boguszpawlowski/ComposeCalendar
@@ -126,7 +127,7 @@ fun CalendarMonth(modifier: Modifier = Modifier, selectedDate: LocalDate, firstD
 data class CalendarEvent(val start: LocalTime, val end: LocalTime, val title: String)
 
 @Composable
-fun CalendarDayView(modifier: Modifier = Modifier,  events: List<CalendarEvent>, onClick: (CalendarEvent) -> Unit) {
+fun CalendarDayView(modifier: Modifier = Modifier, events: List<CalendarEvent>, onClick: (CalendarEvent) -> Unit) {
 	LazyColumn(modifier = modifier) {
 		items(events) {
 			Column(Modifier.padding(4.dp).clickable { onClick(it) }) {
