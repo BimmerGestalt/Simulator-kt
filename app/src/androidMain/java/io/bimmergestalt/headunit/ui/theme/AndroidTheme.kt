@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 @Composable
-fun HeadunitktTheme(
+fun HeadunitktAndroidTheme(
 	darkTheme: Boolean = isSystemInDarkTheme(),
 	// Dynamic color is available on Android 12+
 	colorTheme: ColorTheme = ColorTheme.Dynamic,

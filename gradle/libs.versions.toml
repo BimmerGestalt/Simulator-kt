@@ -9,6 +9,7 @@ androidx-activityCompose = "1.8.2"
 androidx-navigationCompose = "2.7.7"
 navigationRuntimeKtx = "2.7.7"
 org-jetbrains-kotlin-jvm = "1.9.20"
+voyager = "1.1.0-alpha03"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -27,6 +28,10 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version 
 cache4k = { module = "io.github.reactivecircus.cache4k:cache4k", version="0.13.0" }
 pngj = { module = "ar.com.hjg:pngj", version = "2.1.0" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 
 junit = { module = "junit:junit", version = "4.12" }
 androidx-test-junit = { module = "androidx.test.ext:junit", version = "1.1.5" }

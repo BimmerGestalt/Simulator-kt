@@ -24,7 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppInfo
@@ -35,7 +36,7 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import kotlinx.coroutines.launch
 
 @Composable
-fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
+fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
 	Log.i("AppList", "Loading app list ${amApps.values.joinToString(",")}")
 	val scope = rememberCoroutineScope()
 
@@ -72,11 +73,12 @@ fun AppList(navController: NavController, amApps: Map<String, AMAppInfo>, rhmiAp
 					AMAppEntry(app = app) { app.onClick() }
 				}
 			}
+			val navigator = LocalNavigator.currentOrThrow
 			(entryButtonsByCategory.value[category] ?: emptyList()).forEach { (app, entryButton) ->
 				key(app.appId, entryButton.id) {
 					RHMIAppEntry(app = app, entryButton = entryButton) { action ->
 						scope.launch {
-							onClickAction(navController = navController, app)(action, null)
+							onClickAction(navigator = navigator, app)(action, null)
 						}
 					}
 				}

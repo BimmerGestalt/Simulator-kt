@@ -33,6 +33,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.ui.components.Gauge
@@ -54,15 +56,15 @@ import kotlinx.datetime.format.MonthNames
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
+fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 	val state = app.resources.app.states[stateId]
 	if (state == null) {
-		navController.popBackStack()
+		LocalNavigator.currentOrThrow.pop()
 		return
 	}
 
 	val scope = rememberCoroutineScope()
-	val onClickAction = onClickAction(navController, app)
+	val onClickAction = onClickAction(LocalNavigator.currentOrThrow, app)
 
 	DisposableEffect(LocalLifecycleOwner.current) {
 		app.eventHandler(stateId, 1, mapOf(4 to true))  // focus
@@ -78,7 +80,7 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 		LocalImageDB provides app.resources.imageDB,
 		LocalTextDB provides app.resources.textDB
 	) {
-
+		val navigator = LocalNavigator.currentOrThrow
 		Scaffold(
 			topBar = {
 				val titleText = if (state is RHMIState.CalendarMonthState) {
@@ -95,7 +97,7 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 				TopAppBar(
 					title = { Text(titleText) },
 					navigationIcon = { IconButton(onClick = {
-						navController.popBackStack()
+						navigator.pop()
 					}){
 						Icon(Icons.Filled.ArrowBack, contentDescription=null)
 					} }
@@ -132,7 +134,7 @@ fun RHMIState(navController: NavController, app: RHMIAppInfo, stateId: Int) {
 					val calendarState = (state.componentsList[0] as RHMIComponent.CalendarDay).viewModel(onClickAction)
 					RHMICalendarState(modifier = Modifier.padding(padding), state = calendarState)
 				} else if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
-					val actionHandler = onClickAction(navController, app, forceAwait = true)
+					val actionHandler = onClickAction(navigator, app, forceAwait = true)
 					val inputState = (state.componentsList[0] as RHMIComponent.Input).viewModel(actionHandler)
 					RHMIInputState(Modifier.padding(padding), inputState)
 				} else {

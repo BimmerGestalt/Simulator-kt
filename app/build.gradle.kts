@@ -54,10 +54,14 @@ kotlin {
 		commonMain.dependencies {
 			implementation(compose.runtime)
 			implementation(compose.foundation)
-			implementation(compose.material)
+			implementation(compose.material3)
 			implementation(compose.ui)
 			@OptIn(ExperimentalComposeLibrary::class)
 			implementation(compose.components.resources)
+			implementation(libs.voyager.navigator)
+			implementation(libs.voyager.screenModel)
+			implementation(libs.voyager.tabNavigator)
+			implementation(libs.voyager.transitions)
 		}
 	}
 }
@@ -124,6 +128,7 @@ compose.experimental {
 
 tasks.named("preBuild").dependsOn(":IDriveConnectKit:compileEtch")
 tasks.named("preBuild").dependsOn(":IDriveConnectKit:extractEtchRuntime")
+
 
 //tasks["desugarDebugFileDependencies"].dependsOn("extractEtchRuntime")
 gradle.taskGraph.whenReady(closureOf<TaskExecutionGraph> {

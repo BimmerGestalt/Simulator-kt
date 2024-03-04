@@ -1,15 +1,15 @@
 package io.bimmergestalt.headunit.ui.controllers
 
 import android.util.Log
-import androidx.navigation.NavController
+import cafe.adriel.voyager.navigator.Navigator
 import io.bimmergestalt.headunit.models.RHMIAppInfo
-import io.bimmergestalt.headunit.ui.screens.Screens
+import io.bimmergestalt.headunit.ui.screens.RHMIScreen
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 
 /**
  * Currying!
  */
-fun onClickAction(navController: NavController, app: RHMIAppInfo, forceAwait: Boolean = false): suspend (RHMIAction?, extra: Map<Int, Any>?) -> Unit {
+fun onClickAction(navigator: Navigator, app: RHMIAppInfo, forceAwait: Boolean = false): suspend (RHMIAction?, extra: Map<Int, Any>?) -> Unit {
 	return { action, args ->
 		if (action != null) {
 			Log.i("ClickAction", "Clicking action $app $action")
@@ -23,7 +23,7 @@ fun onClickAction(navController: NavController, app: RHMIAppInfo, forceAwait: Bo
 			val hmiAction = action.asHMIAction()
 			val targetState = hmiAction?.getTargetState()
 			if (targetState != null) {
-				navController.navigate(Screens.RHMIState.create(app.appId, targetState.id))
+				navigator.push(RHMIScreen(app, targetState.id))
 			}
 		}
 	}

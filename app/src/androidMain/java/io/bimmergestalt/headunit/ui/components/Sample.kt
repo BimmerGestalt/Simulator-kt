@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.bimmergestalt.headunit.Contents
 import io.bimmergestalt.headunit.R
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
 

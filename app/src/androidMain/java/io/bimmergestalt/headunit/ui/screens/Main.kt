@@ -23,75 +23,82 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.bcl.ServerService
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppsModel
+import io.bimmergestalt.headunit.screens.SettingsScreen
 import io.bimmergestalt.headunit.ui.components.AppList
 import io.bimmergestalt.headunit.ui.components.LabelledCheckbox
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Main(navController: NavController) {
 
-	val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-	val scope = rememberCoroutineScope()
+object AppListScreen: Screen {
+	@OptIn(ExperimentalMaterial3Api::class)
+	@Composable
+	override fun Content() {
 
-	BackHandler(enabled = drawerState.isOpen) {
-		scope.launch { drawerState.close() }
-	}
-	ModalNavigationDrawer(
-		drawerState = drawerState,
-		drawerContent = { ModalDrawerSheet {
+		val navigator = LocalNavigator.currentOrThrow
+		val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+		val scope = rememberCoroutineScope()
 
-			NavigationDrawerItem(
-				label = { Text("Close") },
-				icon = {  Icon(Icons.Filled.ArrowBack, contentDescription = null) },
-				selected = false,
-				onClick = { scope.launch { drawerState.close() } }
-			)
-			Divider()
-			NavigationDrawerItem(
-				label = { Text("Item") },
-				selected = false,
-				onClick = { /*TODO*/ })
+		BackHandler(enabled = drawerState.isOpen) {
+			scope.launch { drawerState.close() }
+		}
+		ModalNavigationDrawer(
+			drawerState = drawerState,
+			drawerContent = { ModalDrawerSheet {
 
-			NavigationDrawerItem(
-				label = { Text("Settings") },
-				selected = false,
-				onClick = { navController.navigate(Screens.Settings.route) })
-
-			val context = LocalContext.current
-			val serverState = ServerService.active.collectAsState()
-			val serverToggle: (Boolean) -> Unit = {
-				if (it) {
-					ServerService.startService(context)
-				} else {
-					ServerService.stopService(context)
-				}
-			}
-			LabelledCheckbox(state = serverState.value, onCheckedChange = serverToggle) {
-				Text("Listen for Apps")
-			}
-		} }
-	) {
-		Scaffold(
-			topBar = {
-				TopAppBar(
-					title = { Text("Test") },
-					navigationIcon = { IconButton(onClick = {
-						scope.launch {
-							drawerState.apply { if (isClosed) open() else close() }
-						}
-					}){
-						Icon(Icons.Filled.Menu, contentDescription=null)
-					} }
+				NavigationDrawerItem(
+					label = { Text("Close") },
+					icon = {  Icon(Icons.Filled.ArrowBack, contentDescription = null) },
+					selected = false,
+					onClick = { scope.launch { drawerState.close() } }
 				)
-			}
-		) { padding ->
-			Column(modifier = Modifier.padding(padding)) {
-				AppList(navController = navController, amApps = AMAppsModel.knownApps, rhmiApps = RHMIAppsModel.knownApps)
+				Divider()
+				NavigationDrawerItem(
+					label = { Text("Item") },
+					selected = false,
+					onClick = { /*TODO*/ })
+
+				NavigationDrawerItem(
+					label = { Text("Settings") },
+					selected = false,
+					onClick = { navigator.push(SettingsScreen) })
+
+				val context = LocalContext.current
+				val serverState = ServerService.active.collectAsState()
+				val serverToggle: (Boolean) -> Unit = {
+					if (it) {
+						ServerService.startService(context)
+					} else {
+						ServerService.stopService(context)
+					}
+				}
+				LabelledCheckbox(state = serverState.value, onCheckedChange = serverToggle) {
+					Text("Listen for Apps")
+				}
+			} }
+		) {
+			Scaffold(
+				topBar = {
+					TopAppBar(
+						title = { Text("Test") },
+						navigationIcon = { IconButton(onClick = {
+							scope.launch {
+								drawerState.apply { if (isClosed) open() else close() }
+							}
+						}){
+							Icon(Icons.Filled.Menu, contentDescription=null)
+						} }
+					)
+				}
+			) { padding ->
+				Column(modifier = Modifier.padding(padding)) {
+					AppList(amApps = AMAppsModel.knownApps, rhmiApps = RHMIAppsModel.knownApps)
+				}
 			}
 		}
 	}
