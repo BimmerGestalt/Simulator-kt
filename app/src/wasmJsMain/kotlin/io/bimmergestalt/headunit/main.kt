@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,12 +20,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.CanvasBasedWindow
-import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.screens.MainScreen
-import io.bimmergestalt.headunit.screens.TitledScreen
+import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -48,10 +48,16 @@ fun Contents() {
 				SlideTransition(navigator) { screen ->
 					Scaffold(topBar = {
 						Row(verticalAlignment = Alignment.CenterVertically) {
-							IconButton(onClick = {navigator.pop()}, enabled = navigator.canPop) {
-								Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+							if (navigator.canPop) {
+								IconButton(onClick = {navigator.pop()}) {
+									Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+								}
+							} else {
+								IconButton(onClick = {}, enabled = false) {
+									Icon(Icons.Filled.Home, contentDescription = null)
+								}
 							}
-							if (screen is TitledScreen) {
+							if (screen is HeadunitScreen) {
 								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
 									color=MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium)
 							}

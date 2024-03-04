@@ -7,18 +7,31 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.bimmergestalt.headunit.bcl.ServerService
 import io.bimmergestalt.headunit.models.RHMIAppsModel
 import io.bimmergestalt.headunit.models.ThemeSettings
+import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.screens.AppListScreen
 import io.bimmergestalt.headunit.ui.screens.RHMIScreen
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
@@ -60,7 +73,27 @@ fun Contents() {
 //		Greeting("Android")
 			Navigator(AppListScreen) { navigator ->
 				SlideTransition(navigator) { screen ->
-					screen.Content()
+					Scaffold(topBar = {
+						Row(verticalAlignment = Alignment.CenterVertically) {
+							if (screen != AppListScreen) {
+								IconButton(onClick = {navigator.pop()}) {
+									Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+								}
+							} else {
+								IconButton(onClick = {}, enabled = false) {
+									Icon(Icons.Filled.Home, contentDescription = null)
+								}
+							}
+							if (screen is HeadunitScreen) {
+								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
+									color=MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium)
+							}
+						}
+					}) { padding ->
+						Box(modifier = Modifier.padding(padding)) {
+							screen.Content()
+						}
+					}
 				}
 
 				LaunchedEffectAndCollect(flow = RHMIAppsModel.incomingEvents) { incomingEvent ->

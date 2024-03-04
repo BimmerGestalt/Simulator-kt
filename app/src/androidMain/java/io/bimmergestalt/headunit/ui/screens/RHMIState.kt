@@ -51,7 +51,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 	val state = app.resources.app.states[stateId]
@@ -78,29 +77,7 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 		LocalTextDB provides app.resources.textDB
 	) {
 		val navigator = LocalNavigator.currentOrThrow
-		Scaffold(
-			topBar = {
-				val titleText = if (state is RHMIState.CalendarMonthState) {
-					val dateInt = state.getDateModel()?.asRaIntModel()?.value ?: 0
-					dateInt.fromRhmiDate()
-					LocalDate.Format {
-						monthName(MonthNames.ENGLISH_FULL)
-						chars(", ")
-						year()
-					}.format(dateInt.fromRhmiDate())
-				} else {
-					state.getTextModel()?.asRaDataModel()?.value ?: "null"
-				}
-				TopAppBar(
-					title = { Text(titleText) },
-					navigationIcon = { IconButton(onClick = {
-						navigator.pop()
-					}){
-						Icon(Icons.Filled.ArrowBack, contentDescription=null)
-					} }
-				)
-			}
-		) { padding ->
+		Scaffold { padding ->
 			if (state is RHMIState.ToolbarState) {
 
 				val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -157,7 +134,7 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) &&
 		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
 	}
-	Box(modifier = modifier.verticalScroll(rememberScrollState())) {
+	Box(modifier = modifier.padding(10.dp).verticalScroll(rememberScrollState())) {
 		Box(modifier = Modifier.sizeIn(10.dp, 10.dp, 1920.dp, 1440.dp)) {
 			absoluteComponents.forEach { component ->
 				Component(app, component, layout, app.eventHandler, onClickAction)

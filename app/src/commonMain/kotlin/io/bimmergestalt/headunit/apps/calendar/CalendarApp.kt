@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.bimmergestalt.headunit.screens.TitledScreen
+import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.components.CalendarEvent
 import io.bimmergestalt.headunit.ui.components.CalendarMonth
 import kotlinx.datetime.Clock
@@ -17,7 +17,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.toLocalDateTime
 
-object CalendarApp: TitledScreen {
+object CalendarApp: HeadunitScreen {
 	val HOLIDAYS = mapOf(
 		LocalDate(2024, 1, 1) to "New Years",
 		LocalDate(2024, 1, 15) to "Martin Luther King Day",

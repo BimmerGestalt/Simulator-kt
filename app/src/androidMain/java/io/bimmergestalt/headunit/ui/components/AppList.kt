@@ -60,7 +60,7 @@ fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) 
 	val categories = remember { derivedStateOf {
 		(knownAppsByCategory.value.keys + entryButtonsByCategory.value.keys).sorted()
 	}}
-	Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+	Column {
 		categories.value.forEach { category ->
 			Column(modifier=Modifier.width(IntrinsicSize.Min)) {
 				Text(modifier = Modifier.padding(start=4.dp, top=12.dp, bottom=4.dp),
