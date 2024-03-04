@@ -11,36 +11,29 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppInfo
+import io.bimmergestalt.headunit.rhmi.loadImage
+import io.bimmergestalt.headunit.rhmi.loadText
 import io.bimmergestalt.headunit.ui.components.Gauge
 import io.bimmergestalt.headunit.ui.components.ImageModel
 import io.bimmergestalt.headunit.ui.components.List
 import io.bimmergestalt.headunit.ui.components.TextModel
-import io.bimmergestalt.headunit.ui.components.ToolbarDrawerSheet
+import io.bimmergestalt.headunit.ui.components.ToolbarEntry
+import io.bimmergestalt.headunit.ui.components.ToolbarSheet
+import io.bimmergestalt.headunit.ui.components.ToolbarState
 import io.bimmergestalt.headunit.ui.controllers.onClickAction
 import io.bimmergestalt.headunit.utils.asBoolean
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
@@ -48,8 +41,6 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format.MonthNames
 
 @Composable
 fun RHMIState(app: RHMIAppInfo, stateId: Int) {
@@ -62,7 +53,7 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 	val scope = rememberCoroutineScope()
 	val onClickAction = onClickAction(LocalNavigator.currentOrThrow, app)
 
-	DisposableEffect(LocalLifecycleOwner.current) {
+	DisposableEffect(Unit) {
 		app.eventHandler(stateId, 1, mapOf(4 to true))  // focus
 		app.eventHandler(stateId, 11, mapOf(23 to true)) // visible
 
@@ -77,46 +68,37 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 		LocalTextDB provides app.resources.textDB
 	) {
 		val navigator = LocalNavigator.currentOrThrow
-		Scaffold { padding ->
-			if (state is RHMIState.ToolbarState) {
-
-				val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-				BackHandler(enabled = drawerState.isOpen) {
-					scope.launch { drawerState.close() }
-				}
-				ModalNavigationDrawer(
-					drawerState = drawerState,
-					drawerContent = {
-						ToolbarDrawerSheet(
-							state = state,
-							drawerState = drawerState,
-							onClickAction = { scope.launch { onClickAction(it, null) } }
-						)
-					}
-				) {
-					RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
-						onClickAction(action, args)
-					} }
-				}
-			} else {
-				if (state is RHMIState.CalendarMonthState) {
-					RHMICalendarMonthState(
-						modifier = Modifier.padding(padding),
-						state = state.viewModel(onClickAction)
-					)
-				} else if (state is RHMIState.CalendarState && state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.CalendarDay) {
-					val calendarState = (state.componentsList[0] as RHMIComponent.CalendarDay).viewModel(onClickAction)
-					RHMICalendarState(modifier = Modifier.padding(padding), state = calendarState)
-				} else if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
-					val actionHandler = onClickAction(navigator, app, forceAwait = true)
-					val inputState = (state.componentsList[0] as RHMIComponent.Input).viewModel(actionHandler)
-					RHMIInputState(Modifier.padding(padding), inputState)
-				} else {
-					RHMIStateBody(Modifier.padding(padding), app = app, state = state) { action, args -> scope.launch {
-						onClickAction(action, args)
-					} }
-				}
+		if (state is RHMIState.ToolbarState) {
+			val toolbarState = remember { ToolbarState(false) }
+			BackHandler(enabled = toolbarState.isOpen) {
+				scope.launch { toolbarState.close() }
 			}
+			val toolbarEntries = state.toolbarComponentsList.map {
+				val icon = loadImage(it.getImageModel(), app.resources.imageDB)
+				val text = loadText(it.getTooltipModel(), app.resources.textDB)
+				ToolbarEntry(icon, text) { scope.launch { onClickAction(it.getAction(), null) }}
+			}
+			ToolbarSheet(entries = toolbarEntries, drawerState = toolbarState) {
+				RHMIStateBody(Modifier, app = app, state = state) { action, args -> scope.launch {
+					onClickAction(action, args)
+				} }
+			}
+		} else if (state is RHMIState.CalendarMonthState) {
+			RHMICalendarMonthState(
+				modifier = Modifier,
+				state = state.viewModel(onClickAction)
+			)
+		} else if (state is RHMIState.CalendarState && state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.CalendarDay) {
+			val calendarState = (state.componentsList[0] as RHMIComponent.CalendarDay).viewModel(onClickAction)
+			RHMICalendarState(modifier = Modifier, state = calendarState)
+		} else if (state.componentsList.size == 1 && state.componentsList[0] is RHMIComponent.Input) {
+			val actionHandler = onClickAction(navigator, app, forceAwait = true)
+			val inputState = (state.componentsList[0] as RHMIComponent.Input).viewModel(actionHandler)
+			RHMIInputState(Modifier, inputState)
+		} else {
+			RHMIStateBody(Modifier, app = app, state = state) { action, args -> scope.launch {
+				onClickAction(action, args)
+			} }
 		}
 	}
 }
@@ -134,7 +116,9 @@ fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClic
 		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) &&
 		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
 	}
-	Box(modifier = modifier.padding(10.dp).verticalScroll(rememberScrollState())) {
+	Box(modifier = modifier
+		.padding(10.dp)
+		.verticalScroll(rememberScrollState())) {
 		Box(modifier = Modifier.sizeIn(10.dp, 10.dp, 1920.dp, 1440.dp)) {
 			absoluteComponents.forEach { component ->
 				Component(app, component, layout, app.eventHandler, onClickAction)

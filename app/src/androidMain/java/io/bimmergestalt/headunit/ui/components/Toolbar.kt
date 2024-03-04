@@ -1,39 +1,113 @@
 package io.bimmergestalt.headunit.ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationDrawerItem
+import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import io.bimmergestalt.headunit.models.RHMIAppInfo
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
-import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
-import kotlinx.coroutines.launch
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import io.bimmergestalt.headunit.models.ImageTintable
+import io.bimmergestalt.headunit.utils.tintFilter
+
+class ToolbarState(isOpen: Boolean = false) {
+	var isOpen by mutableStateOf(isOpen)
+	fun close() {
+		isOpen = false
+	}
+	fun open() {
+		isOpen = true
+	}
+}
+data class ToolbarEntry(val icon: ImageTintable?, val text: String, val onClick: () -> Unit)
 
 @Composable
-fun ToolbarDrawerSheet(state: RHMIState.ToolbarState, drawerState: DrawerState, onClickAction: (RHMIAction?) -> Unit) {
-	val scope = rememberCoroutineScope()
-	ModalDrawerSheet {
-		NavigationDrawerItem(
-			label = { Text("Close") },
-			icon = {  Icon(Icons.Filled.ArrowBack, contentDescription = null) },
-			selected = false,
-			onClick = { scope.launch { drawerState.close() } }
-		)
-		Divider()
-		state.toolbarComponentsList.forEach {
+fun ToolbarSheet(entries: List<ToolbarEntry>, drawerState: ToolbarState = remember {ToolbarState()}, content: @Composable () -> Unit) {
+	val scrollState = rememberScrollState()
+	Box(Modifier.padding(start=36.dp)) {
+		content()
+	}
+	Surface(shadowElevation = 8.dp,
+			modifier = Modifier
+			.animateContentSize()
+			.background(MaterialTheme.colorScheme.surface)
+			.widthIn(min=if (drawerState.isOpen) 200.dp else 36.dp)
+			.fillMaxHeight()
+			.verticalScroll(scrollState)
+			.pointerInput(Unit) {
+				detectHorizontalDragGestures { change, dragAmount ->
+					if (dragAmount < -0) {
+						drawerState.isOpen = false
+					} else if (dragAmount > 0) {
+						drawerState.isOpen = true
+					}
+				}
+			}) {
+		ToolbarSheetContents(entries = entries, drawerState = drawerState)
+	}
+}
 
-			NavigationDrawerItem(
-				label = { TextModel(model = it.getTooltipModel()) },
-				icon = {  ImageModel(model = it.getImageModel())},
-				selected = false,
-				onClick = { onClickAction(it.getAction()) }
-			)
+@Composable
+fun ToolbarSheetContents(entries: List<ToolbarEntry>, drawerState: ToolbarState) {
+	Column(Modifier.padding(6.dp)) {
+		entries.forEach { entry ->
+			Row(verticalAlignment = Alignment.CenterVertically,
+				modifier = Modifier
+					.clickable { entry.onClick() }
+					.padding(vertical = 4.dp)
+			) {
+				val iconSizeModifier = Modifier
+					.padding(4.dp)
+					.size(32.dp)
+				if (entry.icon != null) {
+					Image(entry.icon.image, null,
+						modifier = iconSizeModifier,
+						colorFilter = if (entry.icon.tintable) tintFilter(MaterialTheme.colorScheme.primary, !isSystemInDarkTheme()) else null)
+				} else {
+					Box(modifier = iconSizeModifier)
+				}
+				if (drawerState.isOpen) {
+					Text(
+						entry.text,
+						modifier = Modifier.width(200.dp),
+						style = MaterialTheme.typography.headlineSmall,
+						color = MaterialTheme.colorScheme.primary
+					)
+				}
+			}
 		}
 	}
+}
+
+@Composable
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+fun PreviewToolbar() {
+	val entries = listOf(
+		ToolbarEntry(ImageTintable(ImageBitmap(48, 48), tintable = false), "Placeholder") {}
+	)
+	ToolbarSheet(entries = entries) {}
 }

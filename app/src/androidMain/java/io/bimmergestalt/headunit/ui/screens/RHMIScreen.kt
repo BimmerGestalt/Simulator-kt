@@ -1,6 +1,7 @@
 package io.bimmergestalt.headunit.ui.screens
 
 import androidx.compose.runtime.Composable
+import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.RHMIAppInfo
@@ -22,6 +23,9 @@ class RHMIScreen(val app: RHMIAppInfo, val stateId: Int): HeadunitScreen {
 		RHMIState(app, stateId)
 	}
 
+	override val key: ScreenKey
+		get() = "RHMIScreen(app=${app.appId}, stateId=$stateId)"
+
 	override val title: String
 		get() {
 			return if (state is RHMIState.CalendarMonthState) {
@@ -36,4 +40,5 @@ class RHMIScreen(val app: RHMIAppInfo, val stateId: Int): HeadunitScreen {
 				state?.getTextModel()?.asRaDataModel()?.value ?: "null"
 			}
 		}
+
 }
