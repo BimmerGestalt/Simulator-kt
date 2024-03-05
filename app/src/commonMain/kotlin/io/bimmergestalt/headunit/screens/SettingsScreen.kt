@@ -7,12 +7,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import cafe.adriel.voyager.core.screen.Screen
 import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.ui.components.LabelledCheckbox
 import io.bimmergestalt.headunit.ui.components.LabelledRadioButton
 
-object SettingsScreen: Screen {
+object SettingsScreen: HeadunitScreen {
+	override val title: String
+		get() = "Settings"
+
 	@Composable
 	override fun Content() {
 		val themeViewModel = ThemeSettings
@@ -21,7 +23,6 @@ object SettingsScreen: Screen {
 			label="Primary color")
 
 		Column {
-			Text("Settings",style = MaterialTheme.typography.titleLarge, color = color)
 			LabelledCheckbox(
 				state = themeViewModel.darkMode.value ?: isSystemInDarkTheme(),
 				onCheckedChange = { themeViewModel.darkMode.value = it }

@@ -7,7 +7,6 @@ import io.bimmergestalt.headunit.utils.decodeBitmap
 import io.github.reactivecircus.cache4k.Cache
 import java.security.MessageDigest
 
-data class ImageTintable(val image: ImageBitmap, val tintable: Boolean)
 object ImageCache {
 	private val cache = Cache.Builder<Long, ImageTintable>().build()
 

@@ -1,6 +1,5 @@
 package io.bimmergestalt.headunit.ui.components
 
-import android.content.res.Configuration
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,10 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.utils.tintFilter
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 class ToolbarState(isOpen: Boolean = false) {
 	var isOpen by mutableStateOf(isOpen)
@@ -46,7 +45,7 @@ class ToolbarState(isOpen: Boolean = false) {
 data class ToolbarEntry(val icon: ImageTintable?, val text: String, val onClick: () -> Unit)
 
 @Composable
-fun ToolbarSheet(entries: List<ToolbarEntry>, drawerState: ToolbarState = remember {ToolbarState()}, content: @Composable () -> Unit) {
+fun ToolbarSheet(entries: List<ToolbarEntry>, drawerState: ToolbarState = remember { ToolbarState() }, content: @Composable () -> Unit) {
 	val scrollState = rememberScrollState()
 	Box(Modifier.padding(start=36.dp)) {
 		content()
@@ -104,7 +103,7 @@ fun ToolbarSheetContents(entries: List<ToolbarEntry>, drawerState: ToolbarState)
 }
 
 @Composable
-@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 fun PreviewToolbar() {
 	val entries = listOf(
 		ToolbarEntry(ImageTintable(ImageBitmap(48, 48), tintable = false), "Placeholder") {}

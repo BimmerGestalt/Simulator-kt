@@ -2,6 +2,7 @@ package io.bimmergestalt.headunit.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
+import io.bimmergestalt.headunit.models.ImageTintable
+import io.bimmergestalt.headunit.utils.tintFilter
 
 @Composable
-fun AppListEntry(icon: ImageBitmap?, name: String, onClick: () -> Unit) {
+fun AppListEntry(icon: ImageTintable?, name: String, onClick: () -> Unit) {
 	Row(verticalAlignment = Alignment.CenterVertically,
 		modifier = Modifier
 			.clickable { onClick() }
@@ -27,7 +30,8 @@ fun AppListEntry(icon: ImageBitmap?, name: String, onClick: () -> Unit) {
 			.padding(4.dp)
 			.size(32.dp)
 		if (icon != null) {
-			Image(icon, null, modifier = iconSizeModifier)
+			Image(icon.image, null, modifier = iconSizeModifier,
+				colorFilter = if (icon.tintable) tintFilter(MaterialTheme.colorScheme.primary, !isSystemInDarkTheme()) else null)
 		} else {
 			Box(modifier = iconSizeModifier)
 		}
