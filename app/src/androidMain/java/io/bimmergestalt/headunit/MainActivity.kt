@@ -1,6 +1,7 @@
 package io.bimmergestalt.headunit
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -34,7 +35,7 @@ import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.screens.AppListScreen
 import io.bimmergestalt.headunit.ui.screens.RHMIScreen
-import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
+import io.bimmergestalt.headunit.ui.theme.HeadunitktAndroidTheme
 import io.bimmergestalt.headunit.utils.LaunchedEffectAndCollect
 import io.bimmergestalt.headunit.utils.asEtchInt
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
@@ -61,7 +62,9 @@ fun AppPreview() {
 @Composable
 fun Contents() {
 	val themeViewModel = ThemeSettings
-	HeadunitktTheme(colorTheme = themeViewModel.colorTheme.value,
+	themeViewModel.supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+	HeadunitktAndroidTheme(colorTheme = themeViewModel.colorTheme.value,
 		darkTheme = themeViewModel.darkMode.value ?: isSystemInDarkTheme()) {
 		val background by animateColorAsState(
 			targetValue = MaterialTheme.colorScheme.background,

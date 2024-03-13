@@ -6,10 +6,13 @@ import io.bimmergestalt.headunit.ui.theme.ColorTheme
 object ThemeSettings {
 	val darkMode = mutableStateOf(true)
 	val colorTheme = mutableStateOf(ColorTheme.Lagoon)
-	val availableThemes = listOf(
-//		ColorTheme.Dynamic,
-		ColorTheme.Pink,
-		ColorTheme.Lagoon,
-		ColorTheme.Leaves,
-	)
+
+	var supportsDynamicColor = false
+	val availableThemes
+		get() = listOfNotNull(
+			if (supportsDynamicColor) ColorTheme.Dynamic else null,
+			ColorTheme.Pink,
+			ColorTheme.Lagoon,
+			ColorTheme.Leaves,
+		)
 }

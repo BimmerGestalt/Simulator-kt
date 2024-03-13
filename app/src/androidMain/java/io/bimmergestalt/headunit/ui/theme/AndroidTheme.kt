@@ -20,15 +20,17 @@ fun HeadunitktAndroidTheme(
 	colorTheme: ColorTheme = ColorTheme.Dynamic,
 	content: @Composable () -> Unit
 ) {
-	val colorScheme = when {
-		colorTheme == ColorTheme.Dynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-			val context = LocalContext.current
-			if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-		}
+	val realColorTheme = if (colorTheme == ColorTheme.Dynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+		val context = LocalContext.current
+		ColorTheme("Dynamic", dynamicLightColorScheme(context), dynamicDarkColorScheme(context))
+	} else { colorTheme }
 
+	val colorScheme = when {
 		darkTheme -> colorTheme.dark
 		else -> colorTheme.light
 	}
+
+	// set the titlebar
 	val view = LocalView.current
 	if (!view.isInEditMode) {
 		SideEffect {
@@ -38,9 +40,6 @@ fun HeadunitktAndroidTheme(
 		}
 	}
 
-	MaterialTheme(
-		colorScheme = colorScheme,
-		typography = Typography,
-		content = content
-	)
+	// now apply the rest of the theme
+	HeadunitktTheme(darkTheme, realColorTheme, content)
 }
