@@ -13,11 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.ui.theme.ColorTheme
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.padStart
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
@@ -70,13 +69,13 @@ fun CalendarMonth(modifier: Modifier = Modifier, selectedDate: LocalDate, firstD
 			}
 			Text(heading,
 				modifier = Modifier.padding(6.dp),
-				style = MaterialTheme.typography.titleMedium,
-				color = MaterialTheme.colorScheme.secondary)
+				style = Theme.typography.titleMedium,
+				color = Theme.colorScheme.secondary)
 		} else {
 			val cellDay = if (columnIndex > 0) firstDayDisplayed.plus((rowIndex - 1) * 7 + columnIndex - 1, DateTimeUnit.DAY) else null
 
 			val backgroundColor = if (cellDay == selectedDate) {
-				MaterialTheme.colorScheme.primary
+				Theme.colorScheme.primary
 			} else null
 			val cellModifier = if (backgroundColor != null) {
 				Modifier.background(backgroundColor)
@@ -97,20 +96,20 @@ fun CalendarMonth(modifier: Modifier = Modifier, selectedDate: LocalDate, firstD
 				if (columnIndex == 0) {
 					val weekDay = firstDayDisplayed.plus((rowIndex - 1) * 7, DateTimeUnit.DAY)
 					Text((weekDay.dayOfYear / 7 + 1).toString(),
-						style = MaterialTheme.typography.titleMedium,
-						color = MaterialTheme.colorScheme.secondary)
+						style = Theme.typography.titleMedium,
+						color = Theme.colorScheme.secondary)
 				} else if (cellDay != null) {
 					val color = if (cellDay == selectedDate) {
-						MaterialTheme.colorScheme.onPrimary
+						Theme.colorScheme.onPrimary
 					} else {
-						if (cellDay.month == selectedDate.month) {MaterialTheme.colorScheme.primary} else {MaterialTheme.colorScheme.secondary}
+						if (cellDay.month == selectedDate.month) {Theme.colorScheme.primary} else {Theme.colorScheme.secondary}
 					}
 					Text(cellDay.dayOfMonth.toString(),
 						textAlign = TextAlign.Center,
-						style = MaterialTheme.typography.titleMedium,
+						style = Theme.typography.titleMedium,
 						color = color)
 					if (highlightDay(cellDay)) {
-						Image(painter = ColorPainter(MaterialTheme.colorScheme.tertiary),
+						Image(painter = ColorPainter(Theme.colorScheme.tertiary),
 							contentDescription = null,
 							modifier = Modifier
 								.size(8.dp, 8.dp)
@@ -135,9 +134,9 @@ fun CalendarDayView(modifier: Modifier = Modifier, events: List<CalendarEvent>, 
 				val endTime = "${it.end.hour.padStart(2, '0')}:${it.end.minute.padStart(2, '0')}"
 				val time = "$startTime - $endTime"
 				Text(time, modifier = Modifier.padding(4.dp),
-					style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+					style = Theme.typography.bodyMedium, color = Theme.colorScheme.primary)
 				Text(it.title, modifier = Modifier.padding(4.dp),
-					style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.tertiary)
+					style = Theme.typography.bodyMedium, color = Theme.colorScheme.tertiary)
 			}
 		}
 	}

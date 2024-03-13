@@ -1,10 +1,10 @@
 package io.bimmergestalt.headunit.ui.components
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.bimmergestalt.headunit.ui.screens.LocalTextDB
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 
@@ -17,8 +17,8 @@ fun TextModel(model: RHMIModel?, modifier: Modifier = Modifier, textDB: Map<Stri
 		val text = dictionary[textId]
 		if (text != null) {
 			Text(text, modifier = modifier,
-				style = MaterialTheme.typography.headlineSmall,
-				color = MaterialTheme.colorScheme.primary)
+				style = Theme.typography.headlineSmall,
+				color = Theme.colorScheme.primary)
 		} else {
 			Text("", modifier = modifier)
 		}
@@ -27,8 +27,8 @@ fun TextModel(model: RHMIModel?, modifier: Modifier = Modifier, textDB: Map<Stri
 		val text = model.value as? String
 		if (text != null) {
 			Text(text, modifier = modifier,
-				style = MaterialTheme.typography.headlineSmall,
-				color = MaterialTheme.colorScheme.primary)
+				style = Theme.typography.headlineSmall,
+				color = Theme.colorScheme.primary)
 		} else {
 			Text("", modifier = modifier)
 		}

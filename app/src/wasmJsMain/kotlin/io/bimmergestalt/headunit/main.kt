@@ -9,7 +9,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,6 +25,7 @@ import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.screens.MainScreen
 import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
+import io.bimmergestalt.headunit.ui.theme.Theme
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
@@ -37,10 +37,10 @@ fun main() {
 @Composable
 fun Contents() {
 	val themeViewModel = ThemeSettings
-	HeadunitktTheme(colorTheme = themeViewModel.colorTheme.value,
-		darkTheme = themeViewModel.darkMode.value) {
+	HeadunitktTheme(colorTheme = themeViewModel.colorTheme,
+		darkTheme = themeViewModel.darkMode) {
 		val background by animateColorAsState(
-			targetValue = MaterialTheme.colorScheme.background,
+			targetValue = Theme.colorScheme.background,
 			label="Background color")
 		Surface(modifier = Modifier.fillMaxSize(),
 			color = background) {
@@ -59,7 +59,7 @@ fun Contents() {
 							}
 							if (screen is HeadunitScreen) {
 								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
-									color=MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium)
+									color=Theme.colorScheme.onBackground, style = Theme.typography.titleMedium)
 							}
 						}
 					}) { padding ->

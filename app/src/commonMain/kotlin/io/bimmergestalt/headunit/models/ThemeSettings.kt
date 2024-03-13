@@ -1,11 +1,14 @@
 package io.bimmergestalt.headunit.models
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import io.bimmergestalt.headunit.ui.theme.Appearance
 import io.bimmergestalt.headunit.ui.theme.ColorTheme
 
 object ThemeSettings {
-	val darkMode = mutableStateOf(true)
-	val colorTheme = mutableStateOf(ColorTheme.Lagoon)
+	var darkMode by mutableStateOf(true)
+	var colorTheme by mutableStateOf(ColorTheme.Lagoon)
 
 	var supportsDynamicColor = false
 	val availableThemes
@@ -15,4 +18,10 @@ object ThemeSettings {
 			ColorTheme.Lagoon,
 			ColorTheme.Leaves,
 		)
+
+	var appearance by mutableStateOf(Appearance.Material)
+	val availableAppearances = listOf(
+		Appearance.Material,
+		Appearance.Bavaria,
+	)
 }

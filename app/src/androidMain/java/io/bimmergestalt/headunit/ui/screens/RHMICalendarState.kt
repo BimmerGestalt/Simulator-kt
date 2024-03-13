@@ -3,7 +3,6 @@ package io.bimmergestalt.headunit.ui.screens
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +16,7 @@ import io.bimmergestalt.headunit.rhmi.RHMIDateUtils
 import io.bimmergestalt.headunit.ui.components.CalendarDayView
 import io.bimmergestalt.headunit.ui.components.CalendarEvent
 import io.bimmergestalt.headunit.ui.components.CalendarMonth
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.asEtchInt
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
@@ -115,7 +115,7 @@ fun RHMICalendarState(modifier: Modifier, state: CalendarStateViewModel) {
 			dayOfMonth()
 		}.format(state.date)
 		Text(title,
-			style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary,
+			style = Theme.typography.titleMedium, color = Theme.colorScheme.primary,
 			modifier = Modifier.padding(4.dp).clickable { scope.launch {
 				state.onAction(null)
 			}}

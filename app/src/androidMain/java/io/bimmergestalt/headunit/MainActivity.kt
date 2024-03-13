@@ -17,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +35,7 @@ import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.screens.AppListScreen
 import io.bimmergestalt.headunit.ui.screens.RHMIScreen
 import io.bimmergestalt.headunit.ui.theme.HeadunitktAndroidTheme
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.LaunchedEffectAndCollect
 import io.bimmergestalt.headunit.utils.asEtchInt
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIEvent
@@ -64,10 +64,10 @@ fun Contents() {
 	val themeViewModel = ThemeSettings
 	themeViewModel.supportsDynamicColor = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-	HeadunitktAndroidTheme(colorTheme = themeViewModel.colorTheme.value,
-		darkTheme = themeViewModel.darkMode.value ?: isSystemInDarkTheme()) {
+	HeadunitktAndroidTheme(colorTheme = themeViewModel.colorTheme,
+		darkTheme = themeViewModel.darkMode ?: isSystemInDarkTheme()) {
 		val background by animateColorAsState(
-			targetValue = MaterialTheme.colorScheme.background,
+			targetValue = Theme.colorScheme.background,
 			label="Background color")
 		Surface(
 			modifier = Modifier.fillMaxSize(),
@@ -89,7 +89,7 @@ fun Contents() {
 							}
 							if (screen is HeadunitScreen) {
 								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
-									color=MaterialTheme.colorScheme.onBackground, style = MaterialTheme.typography.titleMedium)
+									color= Theme.colorScheme.onBackground, style = Theme.typography.titleMedium)
 							}
 						}
 					}) { padding ->

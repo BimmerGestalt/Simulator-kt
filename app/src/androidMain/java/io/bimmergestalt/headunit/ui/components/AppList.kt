@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -30,6 +27,7 @@ import io.bimmergestalt.headunit.models.AMAppInfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.ui.controllers.onClickAction
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.tintFilter
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
@@ -64,9 +62,9 @@ fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) 
 		categories.value.forEach { category ->
 			Column(modifier=Modifier.width(IntrinsicSize.Min)) {
 				Text(modifier = Modifier.padding(start=4.dp, top=12.dp, bottom=4.dp),
-					color=MaterialTheme.colorScheme.primary,
-					style = MaterialTheme.typography.headlineMedium, text=category)
-				Divider(color= MaterialTheme.colorScheme.tertiary)
+					color=Theme.colorScheme.primary,
+					style = Theme.typography.headlineMedium, text=category)
+				Divider(color= Theme.colorScheme.tertiary)
 			}
 			(knownAppsByCategory.value[category] ?: emptyList()).forEach { app ->
 				key(app.appId) {
@@ -98,8 +96,8 @@ fun AMAppEntry(app: AMAppInfo, onClick: (AMAppInfo) -> Unit) {
 		Image(app.icon.image, null, modifier = Modifier
 			.padding(4.dp)
 			.size(32.dp),
-			colorFilter = if (app.icon.tintable) tintFilter(MaterialTheme.colorScheme.primary, !isSystemInDarkTheme()) else null)
-		Text(app.name, style = MaterialTheme.typography.headlineSmall, color=MaterialTheme.colorScheme.primary)
+			colorFilter = if (app.icon.tintable) tintFilter(Theme.colorScheme.primary, !isSystemInDarkTheme()) else null)
+		Text(app.name, style = Theme.typography.headlineSmall, color=Theme.colorScheme.primary)
 	}
 }
 

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.R
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
+import io.bimmergestalt.headunit.ui.theme.Theme
 
 
 @Composable
@@ -54,31 +54,31 @@ fun MessageCard(message: Message) {
 				.size(40.dp)
 				// Clip image to be shaped as a circle
 				.clip(CircleShape)
-				.border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+				.border(1.5.dp, Theme.colorScheme.primary, CircleShape)
 		)
 		Spacer(modifier = Modifier.width(8.dp))
 
 		var isExpanded by remember { mutableStateOf(false) }
 		val surfaceColor by animateColorAsState(
-			if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+			if (isExpanded) Theme.colorScheme.primary else Theme.colorScheme.surface,
 			label = "Color"
 		)
 
 		Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
 			Text(message.author,
-				color = MaterialTheme.colorScheme.secondary,
-				style = MaterialTheme.typography.titleSmall
+				color = Theme.colorScheme.secondary,
+				style = Theme.typography.titleSmall
 			)
 			Spacer(modifier = Modifier.height(4.dp))
 			Surface(
-				shape = MaterialTheme.shapes.small,
+				shape = Theme.shapes.small,
 				shadowElevation = 2.dp,
 				color = surfaceColor,
 				modifier = Modifier
 					.animateContentSize()
 					.padding(1.dp)) {
 				Text(message.message,
-					style = MaterialTheme.typography.bodyMedium,
+					style = Theme.typography.bodyMedium,
 					modifier = Modifier.padding(all = 4.dp),
 					maxLines = if (isExpanded) Int.MAX_VALUE else 1,
 				)
@@ -102,7 +102,7 @@ fun SamplePreview() {
 	HeadunitktTheme {
 		Surface(
 			modifier = Modifier.fillMaxSize(),
-			color = MaterialTheme.colorScheme.background
+			color = Theme.colorScheme.background
 		) {
 //		Greeting("Android")
 

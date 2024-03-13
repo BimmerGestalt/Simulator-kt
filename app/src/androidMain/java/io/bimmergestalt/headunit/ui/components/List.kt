@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemoting.RHMIResourceIdentifier
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.asBoolean
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
@@ -82,7 +82,7 @@ fun Cell(data: Any?, modifier: Modifier = Modifier, richText: Boolean = false) {
 	} else {
 		val maxLines = if (richText) Int.MAX_VALUE else 2
 		Text(data?.toString() ?: "", maxLines = maxLines, softWrap = richText,
-			modifier = modifier, color = MaterialTheme.colorScheme.primary)
+			modifier = modifier, color = Theme.colorScheme.primary)
 	}
 }
 

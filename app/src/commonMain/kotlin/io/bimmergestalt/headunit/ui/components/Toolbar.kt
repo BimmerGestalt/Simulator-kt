@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +29,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.models.ImageTintable
+import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.tintFilter
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -53,7 +53,7 @@ fun ToolbarSheet(entries: List<ToolbarEntry>, drawerState: ToolbarState = rememb
 	Surface(shadowElevation = 8.dp,
 			modifier = Modifier
 			.animateContentSize()
-			.background(MaterialTheme.colorScheme.surface)
+			.background(Theme.colorScheme.surface)
 			.widthIn(min=if (drawerState.isOpen) 200.dp else 36.dp)
 			.fillMaxHeight()
 			.verticalScroll(scrollState)
@@ -85,7 +85,7 @@ fun ToolbarSheetContents(entries: List<ToolbarEntry>, drawerState: ToolbarState)
 				if (entry.icon != null) {
 					Image(entry.icon.image, null,
 						modifier = iconSizeModifier,
-						colorFilter = if (entry.icon.tintable) tintFilter(MaterialTheme.colorScheme.primary, !isSystemInDarkTheme()) else null)
+						colorFilter = if (entry.icon.tintable) tintFilter(Theme.colorScheme.primary, !isSystemInDarkTheme()) else null)
 				} else {
 					Box(modifier = iconSizeModifier)
 				}
@@ -93,8 +93,8 @@ fun ToolbarSheetContents(entries: List<ToolbarEntry>, drawerState: ToolbarState)
 					Text(
 						entry.text,
 						modifier = Modifier.width(200.dp),
-						style = MaterialTheme.typography.headlineSmall,
-						color = MaterialTheme.colorScheme.primary
+						style = Theme.typography.headlineSmall,
+						color = Theme.colorScheme.primary
 					)
 				}
 			}
