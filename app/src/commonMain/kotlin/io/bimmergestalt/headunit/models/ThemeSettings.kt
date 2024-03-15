@@ -19,7 +19,7 @@ object ThemeSettings {
 			ColorTheme.Leaves,
 		)
 
-	var appearance by mutableStateOf(Appearance.Material)
+	var appearance by mutableStateOf(Appearance.Bavaria)
 	val availableAppearances = listOf(
 		Appearance.Material,
 		Appearance.Bavaria,

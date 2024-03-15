@@ -9,6 +9,7 @@ androidx-activityCompose = "1.8.2"
 androidx-navigationCompose = "2.7.7"
 navigationRuntimeKtx = "2.7.7"
 org-jetbrains-kotlin-jvm = "1.9.20"
+moko = "0.23.0"
 voyager = "1.1.0-alpha03"
 
 [libraries]
@@ -27,8 +28,9 @@ compose-material3-android = { module = "androidx.compose.material3:material3-and
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.0-RC.2" }
 cache4k = { module = "io.github.reactivecircus.cache4k:cache4k", version="0.13.0" }
+moko-compose = { module = "dev.icerock.moko:resources-compose", version.ref = "moko"}
+moko-generator = { module = "dev.icerock.moko:resources-generator", version.ref = "moko"}
 pngj = { module = "ar.com.hjg:pngj", version = "2.1.0" }
-androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }

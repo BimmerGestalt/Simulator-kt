@@ -1,5 +1,6 @@
 package io.bimmergestalt.headunit.ui.theme
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -7,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Set of Material typography styles to start with
-val Typography = Typography(
+val MaterialTypography = Typography(
 	bodyLarge = TextStyle(
 		fontFamily = FontFamily.Default,
 		fontWeight = FontWeight.Normal,
@@ -31,4 +32,19 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
     */
+)
+
+val BavariaTypography = Typography(
+	titleMedium = TextStyle(
+		fontFamily = FontFamily.SansSerif,
+		fontWeight = FontWeight.Normal,
+		lineHeight = 32.sp,
+		fontSize = 24.sp
+	),
+	labelLarge = TextStyle(
+		fontFamily = FontFamily.SansSerif,
+		fontWeight = FontWeight.Normal,
+		lineHeight = 32.sp,
+		fontSize = 28.sp
+	),
 )

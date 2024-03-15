@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
@@ -32,8 +34,13 @@ import io.bimmergestalt.headunit.bcl.ServerService
 import io.bimmergestalt.headunit.models.RHMIAppsModel
 import io.bimmergestalt.headunit.models.ThemeSettings
 import io.bimmergestalt.headunit.screens.HeadunitScreen
+import io.bimmergestalt.headunit.screens.HomeScreen
+import io.bimmergestalt.headunit.ui.components.Background
+import io.bimmergestalt.headunit.ui.components.StaticTopBar
+import io.bimmergestalt.headunit.ui.components.TopBar
 import io.bimmergestalt.headunit.ui.screens.AppListScreen
 import io.bimmergestalt.headunit.ui.screens.RHMIScreen
+import io.bimmergestalt.headunit.ui.theme.Appearance
 import io.bimmergestalt.headunit.ui.theme.HeadunitktAndroidTheme
 import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.LaunchedEffectAndCollect
@@ -74,30 +81,21 @@ fun Contents() {
 			color = background
 		) {
 //		Greeting("Android")
-			Navigator(AppListScreen) { navigator ->
+			val homeScreen = if (Theme.appearance == Appearance.Material) AppListScreen else HomeScreen
+			Navigator(homeScreen) { navigator ->
+				Background(navigator)
 				SlideTransition(navigator) { screen ->
-					Scaffold(topBar = {
-						Row(verticalAlignment = Alignment.CenterVertically) {
-							if (screen != AppListScreen) {
-								IconButton(onClick = {navigator.pop()}) {
-									Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-								}
-							} else {
-								IconButton(onClick = {}, enabled = false) {
-									Icon(Icons.Filled.Home, contentDescription = null)
-								}
-							}
-							if (screen is HeadunitScreen) {
-								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
-									color= Theme.colorScheme.onBackground, style = Theme.typography.titleMedium)
-							}
+					Scaffold(containerColor = Color.Transparent, topBar = { TopBar(navigator, screen) }) { padding ->
+						val appearancePadding = when(Theme.appearance) {
+							Appearance.Material -> padding
+							Appearance.Bavaria -> PaddingValues(start=100.dp, top = padding.calculateTopPadding())
 						}
-					}) { padding ->
-						Box(modifier = Modifier.padding(padding)) {
+						Box(modifier = Modifier.padding(appearancePadding)) {
 							screen.Content()
 						}
 					}
 				}
+				StaticTopBar(navigator = navigator)
 
 				LaunchedEffectAndCollect(flow = RHMIAppsModel.incomingEvents) { incomingEvent ->
 					Log.i("MainActivity", "Examining incomingEvent $incomingEvent")

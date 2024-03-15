@@ -1,29 +1,26 @@
 package io.bimmergestalt.headunit
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.CanvasBasedWindow
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.bimmergestalt.headunit.models.ThemeSettings
-import io.bimmergestalt.headunit.screens.MainScreen
-import io.bimmergestalt.headunit.screens.HeadunitScreen
+import io.bimmergestalt.headunit.screens.HomeScreen
+import io.bimmergestalt.headunit.ui.components.Background
+import io.bimmergestalt.headunit.ui.components.StaticTopBar
+import io.bimmergestalt.headunit.ui.components.TopBar
+import io.bimmergestalt.headunit.ui.theme.Appearance
 import io.bimmergestalt.headunit.ui.theme.HeadunitktTheme
 import io.bimmergestalt.headunit.ui.theme.Theme
 
@@ -37,37 +34,27 @@ fun main() {
 @Composable
 fun Contents() {
 	val themeViewModel = ThemeSettings
-	HeadunitktTheme(colorTheme = themeViewModel.colorTheme,
+	HeadunitktTheme(materialColorTheme = themeViewModel.colorTheme,
 		darkTheme = themeViewModel.darkMode) {
 		val background by animateColorAsState(
 			targetValue = Theme.colorScheme.background,
 			label="Background color")
 		Surface(modifier = Modifier.fillMaxSize(),
 			color = background) {
-			Navigator(MainScreen) { navigator ->
+			Navigator(HomeScreen) { navigator ->
+				Background(navigator)
 				SlideTransition(navigator) { screen ->
-					Scaffold(topBar = {
-						Row(verticalAlignment = Alignment.CenterVertically) {
-							if (navigator.canPop) {
-								IconButton(onClick = {navigator.pop()}) {
-									Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-								}
-							} else {
-								IconButton(onClick = {}, enabled = false) {
-									Icon(Icons.Filled.Home, contentDescription = null)
-								}
-							}
-							if (screen is HeadunitScreen) {
-								Text(screen.title, modifier = Modifier.padding(6.dp, 6.dp),
-									color=Theme.colorScheme.onBackground, style = Theme.typography.titleMedium)
-							}
+					Scaffold(containerColor = Color.Transparent, topBar = { TopBar(navigator, screen) }) { padding ->
+						val appearancePadding = when(Theme.appearance) {
+							Appearance.Material -> padding
+							Appearance.Bavaria -> PaddingValues(start=100.dp, top = padding.calculateTopPadding())
 						}
-					}) { padding ->
-						Box(modifier = Modifier.padding(padding).padding(8.dp)) {
+						Box(modifier = Modifier.padding(appearancePadding).padding(8.dp)) {
 							screen.Content()
 						}
 					}
 				}
+				StaticTopBar(navigator = navigator)
 			}
 		}
 	}

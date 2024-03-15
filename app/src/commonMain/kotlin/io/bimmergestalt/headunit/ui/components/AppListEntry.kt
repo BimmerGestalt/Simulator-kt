@@ -23,18 +23,18 @@ fun AppListEntry(icon: ImageTintable?, name: String, onClick: () -> Unit) {
 		modifier = Modifier
 			.clickable { onClick() }
 			.fillMaxWidth()
-			.padding(vertical = 4.dp)
+			.padding(vertical = Theme.metrics.list_row_padding)
 	) {
 		val iconSizeModifier = Modifier
 			.padding(4.dp)
 			.size(32.dp)
 		if (icon != null) {
 			Image(icon.image, null, modifier = iconSizeModifier,
-				colorFilter = if (icon.tintable) tintFilter(Theme.colorScheme.primary, !isSystemInDarkTheme()) else null)
+				colorFilter = if (icon.tintable) tintFilter(Theme.colorScheme.onBackground, !isSystemInDarkTheme()) else null)
 		} else {
 			Box(modifier = iconSizeModifier)
 		}
-		Text(name, style = Theme.typography.headlineSmall, color= Theme.colorScheme.primary)
+		Text(name, style = Theme.typography.headlineSmall, color= Theme.colorScheme.onBackground)
 
 	}
 }

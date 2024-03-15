@@ -30,32 +30,41 @@ data class ColorTheme(val name: String, val light: ColorScheme, val dark: ColorS
 	companion object {
 		val Dynamic = ColorTheme("Dynamic", lightColorScheme(), darkColorScheme())
 		val Pink = ColorTheme("Pink", lightColorScheme(
+			onBackground = Purple40,
 			primary = Purple40,
 			secondary = PurpleGrey40,
 			tertiary = Pink40,
 		), darkColorScheme(
+			onBackground = Purple80,
 			primary = Purple80,
 			secondary = PurpleGrey80,
 			tertiary = Pink80,
 		))
 		val Lagoon = ColorTheme("Lagoon", lightColorScheme(
+			onBackground = MidnightBlue,
 			primary = MidnightBlue,
 			secondary = DarkBlue,
 			tertiary = Blue,
 		), darkColorScheme(
+			onBackground = Blue,
 			primary = Blue,
 			secondary = DarkBlue,
 			tertiary = MidnightBlue,
 		))
 		val Leaves = ColorTheme("Leaves", lightColorScheme(
+			onBackground = OliveGreen,
 			primary = OliveGreen,
 			secondary = Green,
 			tertiary = LimeGreen,
 		), darkColorScheme(
+			onBackground = LimeGreen,
 			primary = LimeGreen,
 			secondary = YellowGreen,
 			tertiary = Green,
 		))
+		val Bavaria = darkColorScheme(
+			background = Color(0xFF111111),
+		)
 
 	}
 }

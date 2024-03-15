@@ -20,7 +20,6 @@ import io.bimmergestalt.headunit.ui.components.AppList
 import io.bimmergestalt.headunit.ui.components.AppListEntry
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
 
 
 object AppListScreen: Screen {

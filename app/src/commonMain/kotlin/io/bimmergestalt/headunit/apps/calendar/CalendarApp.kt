@@ -50,6 +50,7 @@ object CalendarApp: HeadunitScreen {
 	private var selectedDate by mutableStateOf(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date)
 
 	override val title: String
+		@Composable
 		get() = LocalDate.Format {
 				monthName(MonthNames.ENGLISH_FULL)
 				chars(", ")

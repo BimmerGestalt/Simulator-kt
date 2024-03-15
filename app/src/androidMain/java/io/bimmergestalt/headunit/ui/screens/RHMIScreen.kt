@@ -27,6 +27,7 @@ class RHMIScreen(val app: RHMIAppInfo, val stateId: Int): HeadunitScreen {
 		get() = "RHMIScreen(app=${app.appId}, stateId=$stateId)"
 
 	override val title: String
+		@Composable
 		get() {
 			return if (state is RHMIState.CalendarMonthState) {
 				val dateInt = state.getDateModel()?.asRaIntModel()?.value ?: 0

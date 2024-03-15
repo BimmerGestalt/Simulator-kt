@@ -5,3 +5,9 @@ plugins {
 	alias(libs.plugins.kotlinAndroid).apply(false)
 	alias(libs.plugins.kotlinMultiplatform).apply(false)
 }
+
+buildscript {
+	dependencies {
+		classpath(libs.moko.generator)
+	}
+}

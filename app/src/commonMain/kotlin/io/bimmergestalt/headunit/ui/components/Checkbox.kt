@@ -9,6 +9,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import io.bimmergestalt.headunit.ui.theme.Theme
 
 @Composable
 fun LabelledCheckbox(
@@ -17,7 +18,7 @@ fun LabelledCheckbox(
 		modifier: Modifier = Modifier.fillMaxWidth(),
 		label: @Composable RowScope.() -> Unit) {
 	Row(modifier = modifier.clickable { onCheckedChange(!state) }, verticalAlignment = Alignment.CenterVertically) {
-		Checkbox(checked=state, onCheckedChange = onCheckedChange)
+		Checkbox(checked=state, onCheckedChange = onCheckedChange, colors = Theme.checkboxColors)
 		label()
 	}
 }
@@ -29,7 +30,7 @@ fun LabelledRadioButton(
 	modifier: Modifier = Modifier.fillMaxWidth(),
 	label: @Composable RowScope.() -> Unit) {
 	Row(modifier = modifier.clickable { onClick() }, verticalAlignment = Alignment.CenterVertically) {
-		RadioButton(selected = state, onClick = onClick)
+		RadioButton(selected = state, onClick = onClick, colors = Theme.radioButtonColors)
 		label()
 	}
 }

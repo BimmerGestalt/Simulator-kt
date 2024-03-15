@@ -57,6 +57,7 @@ kotlin {
 			@OptIn(ExperimentalComposeLibrary::class)
 			implementation(compose.components.resources)
 
+//			api(libs.moko.compose)
 			implementation(libs.kotlinx.datetime)
 			implementation(libs.voyager.navigator)
 			implementation(libs.voyager.screenModel)

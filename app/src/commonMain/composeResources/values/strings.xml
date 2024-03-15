@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Headunit</string>
+    <string name="lbl_main_menu">Main menu</string>
+    <string name="lbl_main_multimedia">Multimedia</string>
+    <string name="lbl_main_radio">Radio</string>
+    <string name="lbl_main_telephone">Telephone</string>
+    <string name="lbl_main_navigation">Navigation</string>
+    <string name="lbl_main_office">Office</string>
+    <string name="lbl_main_connecteddrive">ConnectedDrive</string>
+    <string name="lbl_main_vehicle_information">Vehicle Information</string>
+    <string name="lbl_main_settings">Settings</string>
+</resources>

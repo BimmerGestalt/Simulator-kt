@@ -146,7 +146,7 @@ fun CalendarDayView(modifier: Modifier = Modifier, events: List<CalendarEvent>, 
 @Composable
 fun Preview() {
 
-	HeadunitktTheme(colorTheme = ColorTheme.Lagoon,
+	HeadunitktTheme(materialColorTheme = ColorTheme.Lagoon,
 		darkTheme = isSystemInDarkTheme()) {
 		Surface {
 //			CalendarMonth(

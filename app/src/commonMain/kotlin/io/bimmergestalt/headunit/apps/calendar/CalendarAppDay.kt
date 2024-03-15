@@ -10,6 +10,7 @@ import kotlinx.datetime.format.Padding
 
 class CalendarAppDay(val date: LocalDate, val events: List<CalendarEvent>): HeadunitScreen {
 	override val title: String
+		@Composable
 		get() = LocalDate.Format {
 			monthName(MonthNames.ENGLISH_FULL)
 			chars(" ")
