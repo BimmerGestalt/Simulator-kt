@@ -13,8 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import de.bmw.idrive.BMWRemoting
-import de.bmw.idrive.BMWRemoting.RHMIResourceIdentifier
+import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.ui.theme.Theme
 import io.bimmergestalt.headunit.utils.asBoolean
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
@@ -74,10 +73,8 @@ fun List(component: RHMIComponent.List, modifier: Modifier = Modifier,
 
 @Composable
 fun Cell(data: Any?, modifier: Modifier = Modifier, richText: Boolean = false) {
-	val isByteArray = data is ByteArray
-	val isImageData = data is BMWRemoting.RHMIResourceData && data.type == BMWRemoting.RHMIResourceType.IMAGEDATA
-	val isImageId = data is RHMIResourceIdentifier && data.type == BMWRemoting.RHMIResourceType.IMAGEID
-	if (isByteArray || isImageData || isImageId) {
+	val isImage = data is ImageTintable
+	if (isImage) {
 		ImageCell(data, modifier.heightIn(48.dp, 96.dp))
 	} else {
 		val maxLines = if (richText) Int.MAX_VALUE else 2

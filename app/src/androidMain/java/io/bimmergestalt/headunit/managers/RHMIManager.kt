@@ -5,6 +5,8 @@ import android.os.HandlerThread
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemoting.RHMIDataTable
+import de.bmw.idrive.BMWRemoting.RHMIResourceData
+import de.bmw.idrive.BMWRemoting.RHMIResourceIdentifier
 import de.bmw.idrive.BMWRemoting.RHMIResourceType
 import de.bmw.idrive.BMWRemotingClient
 import io.bimmergestalt.headunit.models.RHMIAppInfo
@@ -12,6 +14,7 @@ import io.bimmergestalt.headunit.models.RHMIApps
 import io.bimmergestalt.headunit.models.RHMIEvent
 import io.bimmergestalt.headunit.rhmi.RHMIResources
 import io.bimmergestalt.headunit.utils.asEtchIntOrAny
+import io.bimmergestalt.headunit.utils.decodeImage
 import io.bimmergestalt.headunit.utils.isSameSize
 import io.bimmergestalt.headunit.utils.merge
 import io.bimmergestalt.headunit.utils.overlaps
@@ -82,28 +85,59 @@ class RHMIManager(val state: RHMIApps) {
 		eventHandlers.remove(handle)
 	}
 
+	/**
+	 * Decode any images
+	 */
+	fun parseData(appId: String, value: Any?): Any? {
+		val app = state.knownApps[appId] ?: return value
+
+		return if (value is RHMIDataTable) {
+			val newValue = value.data.map { row ->
+				row.map {
+					parseData(appId, it)
+				}.toTypedArray()
+			}.toTypedArray()
+			RHMIDataTable(newValue, value.virtualTableEnable,
+				value.fromRow, value.numRows, value.totalRows,
+				value.fromColumn, value.numColumns, value.totalColumns)
+		} else if (value is RHMIResourceIdentifier && value.type == RHMIResourceType.IMAGEID) {
+			app.resources.imageDB[value.id]
+		} else if (value is RHMIResourceData && value.type == RHMIResourceType.IMAGEDATA) {
+			value.data.decodeImage()
+		} else if (value is ByteArray) {
+			value.decodeImage()
+		} else {
+			value
+		}
+	}
+
 	fun setData(appId: String, modelId: Int, value: Any?) {
-		if (value is RHMIDataTable) {
-			value.numRows = value.data.size // apps can lie about numRows and numCols
-			if (value.data.isNotEmpty()) {
-				value.numColumns = max(value.data.map { it.size })
+		val app = state.knownApps[appId] ?: return
+		val parsedValue = parseData(appId, value)
+		if (parsedValue is RHMIDataTable) {
+			parsedValue.numRows = parsedValue.data.size // apps can lie about numRows and numCols
+			if (parsedValue.data.isNotEmpty()) {
+				parsedValue.numColumns = max(parsedValue.data.map { it.size })
 			}
-			val existing = state.knownApps[appId]?.resources?.app?.getModel(modelId)
-			if (existing is RHMIDataTable && existing.isSameSize(value) && !value.overlaps(existing)) {
+			val existing = app.resources.app.getModel(modelId)
+			if (existing is RHMIDataTable && existing.isSameSize(parsedValue) && !parsedValue.overlaps(existing)) {
 				try {
 					// create a new object to trigger state tracking
 					val replacement = RHMIDataTable(existing.data, existing.virtualTableEnable,
 						existing.fromRow, existing.numRows, existing.totalRows,
 						existing.fromColumn, existing.numColumns, existing.totalColumns)
-					replacement.merge(value)
-					state.knownApps[appId]?.resources?.app?.setModel(modelId, replacement)
+					replacement.merge(parsedValue)
+					app.resources.app.setModel(modelId, replacement)
 					return
 				} catch (e: IllegalArgumentException) {
 					// unable to merge this table update, just replace like normal
 				}
 			}
+			app.resources.app.setModel(modelId, parsedValue)
+		} else {
+			app.resources.app.setModel(modelId, parsedValue?.asEtchIntOrAny())
 		}
-		state.knownApps[appId]?.resources?.app?.setModel(modelId, value?.asEtchIntOrAny())
+
 	}
 	fun setProperty(appId: String, componentId: Int, propertyId: Int, value: Any?) {
 		state.knownApps[appId]?.resources?.app?.setProperty(componentId, propertyId, value)

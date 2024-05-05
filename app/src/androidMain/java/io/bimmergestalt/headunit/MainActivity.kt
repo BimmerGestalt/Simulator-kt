@@ -81,7 +81,8 @@ fun Contents() {
 			color = background
 		) {
 //		Greeting("Android")
-			val homeScreen = if (Theme.appearance == Appearance.Material) AppListScreen else HomeScreen
+			val homeScreen = AppListScreen
+//			val homeScreen = if (Theme.appearance == Appearance.Material) AppListScreen else HomeScreen
 			Navigator(homeScreen) { navigator ->
 				Background(navigator)
 				SlideTransition(navigator) { screen ->
