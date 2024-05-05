@@ -58,7 +58,6 @@ object HomeScreen: HeadunitScreen {
 
 @Composable
 fun HomeScreenMaterial() {
-	val navigator = LocalNavigator.currentOrThrow
 	Column {
 		Text("It works!", color = Theme.colorScheme.onBackground)
 

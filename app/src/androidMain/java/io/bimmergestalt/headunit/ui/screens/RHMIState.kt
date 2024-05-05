@@ -25,8 +25,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppInfo
-import io.bimmergestalt.headunit.rhmi.loadImage
-import io.bimmergestalt.headunit.rhmi.loadText
 import io.bimmergestalt.headunit.ui.components.Gauge
 import io.bimmergestalt.headunit.ui.components.ImageModel
 import io.bimmergestalt.headunit.ui.components.List
@@ -36,6 +34,8 @@ import io.bimmergestalt.headunit.ui.components.ToolbarSheet
 import io.bimmergestalt.headunit.ui.components.ToolbarState
 import io.bimmergestalt.headunit.ui.controllers.onClickAction
 import io.bimmergestalt.headunit.utils.asBoolean
+import io.bimmergestalt.headunit.utils.loadImage
+import io.bimmergestalt.headunit.utils.loadText
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIAction
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIProperty
@@ -64,7 +64,6 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 	}
 
 	CompositionLocalProvider(
-		LocalImageDB provides app.resources.imageDB,
 		LocalTextDB provides app.resources.textDB
 	) {
 		val navigator = LocalNavigator.currentOrThrow
@@ -74,7 +73,7 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 				scope.launch { toolbarState.close() }
 			}
 			val toolbarEntries = state.toolbarComponentsList.map {
-				val icon = loadImage(it.getImageModel(), app.resources.imageDB)
+				val icon = loadImage(it.getImageModel())
 				val text = loadText(it.getTooltipModel(), app.resources.textDB)
 				ToolbarEntry(icon, text) { scope.launch { onClickAction(it.getAction(), null) }}
 			}
@@ -168,5 +167,4 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int,
 	}
 }
 
-val LocalImageDB = staticCompositionLocalOf { emptyMap<Int, ImageTintable>() }
 val LocalTextDB = staticCompositionLocalOf { emptyMap<String, Map<Int, String>>() }

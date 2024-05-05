@@ -109,7 +109,7 @@ fun RHMIAppEntry(app: RHMIAppInfo, entryButton: RHMIComponent.EntryButton, onCli
 			.fillMaxWidth()
 			.padding(vertical = 4.dp)
 	) {
-		ImageModel(model = entryButton.getImageModel(), imageDB = app.resources.imageDB, modifier = Modifier
+		ImageModel(model = entryButton.getImageModel(), modifier = Modifier
 			.padding(4.dp)
 			.size(32.dp))
 

@@ -3,9 +3,7 @@ package io.bimmergestalt.headunit.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.core.graphics.blue
 import androidx.core.graphics.get
 import androidx.core.graphics.green
@@ -20,19 +18,24 @@ suspend fun ByteArray.decodeAndCacheImage(storeInCache: Boolean = false): ImageT
 	ImageCache.decodeImageBitmap(this, storeInCache)    // calls ByteArray.decodeBitmap to fill cache
 
 
-data class BitmapTintable(val bitmap: Bitmap, val tintable: Boolean)
-fun ByteArray.decodeBitmap(): BitmapTintable? {
+fun ByteArray.decodeImage(): ImageTintable? {
 	// try to parse as PNG
 	try {
 		val pngReader = PngReader(ByteArrayInputStream(this))
 		if (pngReader.imgInfo.greyscale) {
-			return BitmapTintable(BitmapFactory.decodeByteArray(this, 0, size).clearBlack(), true)
+			val bitmap = BitmapFactory.decodeByteArray(this, 0, size).clearBlack()
+			val image = bitmap.asImageBitmap()
+			image.prepareToDraw()
+			return ImageTintable(image, true)
 		}
 	} catch (e: Exception) {
 
 	}
 	return try {
-		BitmapTintable(BitmapFactory.decodeByteArray(this, 0, size).clearBlack(), false)
+		val bitmap = BitmapFactory.decodeByteArray(this, 0, size).clearBlack()
+		val image = bitmap.asImageBitmap()
+		image.prepareToDraw()
+		ImageTintable(image, false)
 	} catch (e: Exception) {
 		Log.w("GraphicsUtils", "Failed to decode image", e)
 		null
