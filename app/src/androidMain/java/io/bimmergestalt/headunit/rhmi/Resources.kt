@@ -7,6 +7,7 @@ import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.utils.decodeAndCacheImage
 import io.bimmergestalt.headunit.utils.decodeBitmap
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
+import io.bimmergestalt.idriveconnectkit.rhmi.deserialization.loadFromXML
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayInputStream
 import java.util.zip.ZipInputStream
