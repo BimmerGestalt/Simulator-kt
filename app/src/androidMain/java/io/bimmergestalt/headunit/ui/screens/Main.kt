@@ -15,7 +15,6 @@ import headunit_kt.app.generated.resources.ic_carinfo
 import io.bimmergestalt.headunit.models.AMAppsModel
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppsModel
-import io.bimmergestalt.headunit.screens.SettingsScreen
 import io.bimmergestalt.headunit.ui.components.AppList
 import io.bimmergestalt.headunit.ui.components.AppListEntry
 import org.jetbrains.compose.resources.ExperimentalResourceApi

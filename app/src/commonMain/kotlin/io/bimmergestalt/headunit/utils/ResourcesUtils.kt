@@ -1,10 +1,10 @@
 package io.bimmergestalt.headunit.utils
+import io.bimmergestalt.headunit.models.ImageModel
 import io.bimmergestalt.headunit.models.ImageTintable
-import io.bimmergestalt.headunit.rhmi.RHMIModelHeadunit
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 fun loadImage(model: RHMIModel?): ImageTintable? {
-	if (model is RHMIModelHeadunit.ImageModel) {
+	if (model is ImageModel) {
 		return model.image
 	}
 	return null

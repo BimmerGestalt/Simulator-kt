@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.bimmergestalt.headunit.screens.HeadunitScreen
+import io.bimmergestalt.headunit.ui.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.components.CalendarEvent
 import io.bimmergestalt.headunit.ui.components.CalendarMonth
 import kotlinx.datetime.Clock

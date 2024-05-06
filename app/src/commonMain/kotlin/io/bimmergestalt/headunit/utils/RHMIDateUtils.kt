@@ -1,4 +1,4 @@
-package io.bimmergestalt.headunit.rhmi
+package io.bimmergestalt.headunit.utils
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime

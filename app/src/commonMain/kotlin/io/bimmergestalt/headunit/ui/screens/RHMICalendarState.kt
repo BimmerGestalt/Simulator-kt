@@ -12,7 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.bimmergestalt.headunit.rhmi.RHMIDateUtils
+import io.bimmergestalt.headunit.utils.RHMIDateUtils
 import io.bimmergestalt.headunit.ui.components.CalendarDayView
 import io.bimmergestalt.headunit.ui.components.CalendarEvent
 import io.bimmergestalt.headunit.ui.components.CalendarMonth

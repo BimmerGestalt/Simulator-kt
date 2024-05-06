@@ -16,7 +16,7 @@ import androidx.compose.ui.window.CanvasBasedWindow
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import io.bimmergestalt.headunit.models.ThemeSettings
-import io.bimmergestalt.headunit.screens.HomeScreen
+import io.bimmergestalt.headunit.ui.screens.HomeScreen
 import io.bimmergestalt.headunit.ui.components.Background
 import io.bimmergestalt.headunit.ui.components.StaticTopBar
 import io.bimmergestalt.headunit.ui.components.TopBar

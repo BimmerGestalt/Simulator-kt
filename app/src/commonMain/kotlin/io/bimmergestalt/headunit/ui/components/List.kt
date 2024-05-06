@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.models.ImageTintable
@@ -93,6 +92,7 @@ fun SimpleList(items: List<Any>) {
 	}
 }
 
+/*
 @Preview()
 @Composable
 fun ListPreview() {
@@ -102,3 +102,4 @@ fun ListPreview() {
 		"App3"
 	))
 }
+ */
