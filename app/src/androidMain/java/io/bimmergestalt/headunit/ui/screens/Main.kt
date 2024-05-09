@@ -21,7 +21,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.imageResource
 
 
-object AppListScreen: Screen {
+object MainScreen: Screen {
 	@OptIn(ExperimentalResourceApi::class)
 	@Composable
 	override fun Content() {
