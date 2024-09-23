@@ -10,7 +10,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.bimmergestalt.headunit.models.ImageTintable
@@ -38,7 +37,7 @@ fun List(component: RHMIComponent.List, modifier: Modifier = Modifier,
 				val firstMod = listState.firstVisibleItemIndex / 10
 				val window = max(0, firstMod - 10) to
 							min(model.endIndex, firstMod + 30)
-				if ((window.first until window.second).any { model[it].isEmpty() }) {
+				if ((window.first until window.second).any { model[it]?.isEmpty() != true }) {
 					window
 				} else {
 					null
@@ -59,7 +58,7 @@ fun List(component: RHMIComponent.List, modifier: Modifier = Modifier,
 			rowModifier = modifier.heightIn(48.dp, 96.dp),
 			onClickRow = { rowIndex -> onClickAction(component.getAction(), mapOf(1 to rowIndex)) }
 		) { col, row ->
-			val data = model[row].getOrNull(col)
+			val data = model[row]?.getOrNull(col)
 			val maybeWidth = columnWidths.getOrNull(col)
 			var cellModifier: Modifier = Modifier.padding(6.dp)
 			if (maybeWidth != null) {
@@ -93,6 +92,7 @@ fun SimpleList(items: List<Any>) {
 	}
 }
 
+/*
 @Preview()
 @Composable
 fun ListPreview() {
@@ -102,3 +102,4 @@ fun ListPreview() {
 		"App3"
 	))
 }
+ */

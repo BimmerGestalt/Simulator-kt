@@ -1,15 +1,13 @@
 package io.bimmergestalt.headunit.utils
+import io.bimmergestalt.headunit.models.ImageModel
 import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIModel
 
 fun loadImage(model: RHMIModel?): ImageTintable? {
-	val app = when (model) {
-		is RHMIModel.ImageIdModel -> model.app
-		is RHMIModel.RaImageModel -> model.app
-		else -> null
+	if (model is ImageModel) {
+		return model.image
 	}
-	val value = app?.getModel(model?.id ?: -1)
-	return value as? ImageTintable
+	return null
 }
 
 fun loadText(model: RHMIModel?, textDB: Map<String, Map<Int, String>>): String {

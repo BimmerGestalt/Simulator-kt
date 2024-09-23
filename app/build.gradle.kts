@@ -45,8 +45,6 @@ kotlin {
 			implementation(libs.compose.material3.android)
 			implementation(libs.cache4k)
 			implementation(libs.pngj)
-
-			implementation(projects.iDriveConnectKit)
 		}
 
 		commonMain.dependencies {
@@ -56,6 +54,7 @@ kotlin {
 			implementation(compose.ui)
 			@OptIn(ExperimentalComposeLibrary::class)
 			implementation(compose.components.resources)
+			implementation(libs.idriveconnectkit)
 
 //			api(libs.moko.compose)
 			implementation(libs.kotlinx.datetime)
@@ -65,6 +64,13 @@ kotlin {
 			implementation(libs.voyager.transitions)
 
 			implementation(compose.components.uiToolingPreview)
+		}
+
+		@Suppress("OPT_IN_USAGE")
+		wasmJs {
+			dependencies {
+//				implementation(libs.idriveconnectkit.wasmJs)
+			}
 		}
 	}
 }
@@ -129,8 +135,8 @@ compose.experimental {
 	web.application {}
 }
 
-tasks.named("preBuild").dependsOn(":IDriveConnectKit:compileEtch")
-tasks.named("preBuild").dependsOn(":IDriveConnectKit:extractEtchRuntime")
+//tasks.named("preBuild").dependsOn(":IDriveConnectKit:compileEtch")
+//tasks.named("preBuild").dependsOn(":IDriveConnectKit:extractEtchRuntime")
 
 
 //tasks["desugarDebugFileDependencies"].dependsOn("extractEtchRuntime")

@@ -1,4 +1,4 @@
-package io.bimmergestalt.headunit.screens
+package io.bimmergestalt.headunit.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState

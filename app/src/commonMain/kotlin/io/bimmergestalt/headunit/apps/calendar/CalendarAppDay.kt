@@ -1,7 +1,7 @@
 package io.bimmergestalt.headunit.apps.calendar
 
 import androidx.compose.runtime.Composable
-import io.bimmergestalt.headunit.screens.HeadunitScreen
+import io.bimmergestalt.headunit.ui.screens.HeadunitScreen
 import io.bimmergestalt.headunit.ui.components.CalendarDayView
 import io.bimmergestalt.headunit.ui.components.CalendarEvent
 import kotlinx.datetime.LocalDate

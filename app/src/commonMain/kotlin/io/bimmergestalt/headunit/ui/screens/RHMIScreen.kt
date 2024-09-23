@@ -5,7 +5,6 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import io.bimmergestalt.headunit.models.RHMIAppInfo
-import io.bimmergestalt.headunit.screens.HeadunitScreen
 import io.bimmergestalt.idriveconnectkit.rhmi.RHMIState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames

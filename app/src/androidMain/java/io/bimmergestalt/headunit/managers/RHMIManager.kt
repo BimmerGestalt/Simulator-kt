@@ -2,6 +2,7 @@ package io.bimmergestalt.headunit.managers
 
 import android.os.Handler
 import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import de.bmw.idrive.BMWRemoting
 import de.bmw.idrive.BMWRemoting.RHMIDataTable
@@ -13,6 +14,7 @@ import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.models.RHMIApps
 import io.bimmergestalt.headunit.models.RHMIEvent
 import io.bimmergestalt.headunit.rhmi.RHMIResources
+import io.bimmergestalt.headunit.rhmi.loadResources
 import io.bimmergestalt.headunit.utils.asEtchIntOrAny
 import io.bimmergestalt.headunit.utils.decodeImage
 import io.bimmergestalt.headunit.utils.isSameSize
@@ -20,6 +22,8 @@ import io.bimmergestalt.headunit.utils.merge
 import io.bimmergestalt.headunit.utils.overlaps
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.runBlocking
 import java.util.Collections.max
 import java.util.concurrent.ConcurrentHashMap
 
@@ -31,6 +35,7 @@ class RHMIManager(val state: RHMIApps) {
 
 	private val ioThread = HandlerThread("toEtchClients").apply { start() }
 	private val ioHandler = Handler(ioThread.looper)
+	private val uiHandler = Handler(Looper.getMainLooper())
 
 	fun registerApp(handle: Int, appId: String, resourceData: Map<RHMIResourceType, List<ByteArray>>) {
 		val existing = state.knownApps[appId]
@@ -127,20 +132,28 @@ class RHMIManager(val state: RHMIApps) {
 						existing.fromRow, existing.numRows, existing.totalRows,
 						existing.fromColumn, existing.numColumns, existing.totalColumns)
 					replacement.merge(parsedValue)
-					app.resources.app.setModel(modelId, replacement)
+					runBlocking(uiHandler.asCoroutineDispatcher()) {
+						app.resources.app.setModel(modelId, replacement)
+					}
 					return
 				} catch (e: IllegalArgumentException) {
 					// unable to merge this table update, just replace like normal
 				}
 			}
-			app.resources.app.setModel(modelId, parsedValue)
+			runBlocking(uiHandler.asCoroutineDispatcher()) {
+				app.resources.app.setModel(modelId, parsedValue)
+			}
 		} else {
-			app.resources.app.setModel(modelId, parsedValue?.asEtchIntOrAny())
+			runBlocking(uiHandler.asCoroutineDispatcher()) {
+				app.resources.app.setModel(modelId, parsedValue?.asEtchIntOrAny())
+			}
 		}
 
 	}
 	fun setProperty(appId: String, componentId: Int, propertyId: Int, value: Any?) {
-		state.knownApps[appId]?.resources?.app?.setProperty(componentId, propertyId, value)
+		runBlocking(uiHandler.asCoroutineDispatcher()) {
+			state.knownApps[appId]?.resources?.app?.setProperty(componentId, propertyId, value)
+		}
 	}
 	fun triggerEvent(appId: String, eventId: Int, args: Map<Int, Any?>) {
 		Log.i(TAG, "Triggering event $appId $eventId")

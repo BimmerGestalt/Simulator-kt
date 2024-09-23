@@ -1,6 +1,5 @@
 package io.bimmergestalt.headunit.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -34,14 +34,14 @@ import io.bimmergestalt.idriveconnectkit.rhmi.RHMIComponent
 import kotlinx.coroutines.launch
 
 @Composable
-fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) {
-	Log.i("AppList", "Loading app list ${amApps.values.joinToString(",")}")
+fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>, showCategory: String? = null) {
 	val scope = rememberCoroutineScope()
 
 	val knownAppsByCategory = remember { derivedStateOf {
 		AMAppsModel.knownApps.values
 			.sortedBy { it.name }
 			.groupBy { it.category }
+			.filterKeys { showCategory == null || showCategory == it }
 	} }
 	val entryButtonsByCategory = remember { derivedStateOf {
 		rhmiApps.values
@@ -54,17 +54,22 @@ fun AppList(amApps: Map<String, AMAppInfo>, rhmiApps: Map<String, RHMIAppInfo>) 
 			.flatten()
 			.sortedBy { it.second.applicationWeight }
 			.groupBy { it.second.applicationType }
+			.filterKeys { showCategory == null || showCategory == it }
 	}}
 	val categories = remember { derivedStateOf {
 		(knownAppsByCategory.value.keys + entryButtonsByCategory.value.keys).sorted()
 	}}
 	Column {
 		categories.value.forEach { category ->
-			Column(modifier=Modifier.width(IntrinsicSize.Min)) {
-				Text(modifier = Modifier.padding(start=4.dp, top=12.dp, bottom=4.dp),
-					color=Theme.colorScheme.primary,
-					style = Theme.typography.headlineMedium, text=category)
-				Divider(color= Theme.colorScheme.tertiary)
+			if (showCategory == null) {
+				Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+					Text(
+						modifier = Modifier.padding(start = 4.dp, top = 12.dp, bottom = 4.dp),
+						color = Theme.colorScheme.primary,
+						style = Theme.typography.headlineMedium, text = category
+					)
+					HorizontalDivider(color = Theme.colorScheme.tertiary)
+				}
 			}
 			(knownAppsByCategory.value[category] ?: emptyList()).forEach { app ->
 				key(app.appId) {

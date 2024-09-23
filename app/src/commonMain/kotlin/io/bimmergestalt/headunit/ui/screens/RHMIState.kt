@@ -1,8 +1,8 @@
 package io.bimmergestalt.headunit.ui.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.height
@@ -17,13 +17,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import io.bimmergestalt.headunit.models.ImageTintable
 import io.bimmergestalt.headunit.models.RHMIAppInfo
 import io.bimmergestalt.headunit.ui.components.Gauge
 import io.bimmergestalt.headunit.ui.components.ImageModel
@@ -69,9 +66,9 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 		val navigator = LocalNavigator.currentOrThrow
 		if (state is RHMIState.ToolbarState) {
 			val toolbarState = remember { ToolbarState(false) }
-			BackHandler(enabled = toolbarState.isOpen) {
-				scope.launch { toolbarState.close() }
-			}
+//			BackHandler(enabled = toolbarState.isOpen) {
+//				scope.launch { toolbarState.close() }
+//			}
 			val toolbarEntries = state.toolbarComponentsList.map {
 				val icon = loadImage(it.getImageModel())
 				val text = loadText(it.getTooltipModel(), app.resources.textDB)
@@ -104,27 +101,28 @@ fun RHMIState(app: RHMIAppInfo, stateId: Int) {
 
 @Composable
 fun RHMIStateBody(modifier: Modifier, app: RHMIAppInfo, state: RHMIState, onClickAction: (RHMIAction?, Map<Int, Any>?) -> Unit) {
-	val windowWidth = LocalConfiguration.current.screenWidthDp
-	val layout = if (windowWidth > 700) 0 else 1
+	BoxWithConstraints {
+		val layout = if (maxWidth.value > 700) 0 else 1
 
-	val absoluteComponents = state.componentsList.filter {
-		it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) ||
-		it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
-	}
-	val relativeComponents = state.componentsList.filter {
-		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) &&
-		!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
-	}
-	Box(modifier = modifier
-		.padding(10.dp)
-		.verticalScroll(rememberScrollState())) {
-		Box(modifier = Modifier.sizeIn(10.dp, 10.dp, 1920.dp, 1440.dp)) {
-			absoluteComponents.forEach { component ->
-				Component(app, component, layout, app.eventHandler, onClickAction)
-			}
-			Column {
-				relativeComponents.forEach { component ->
+		val absoluteComponents = state.componentsList.filter {
+			it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) ||
+					it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
+		}
+		val relativeComponents = state.componentsList.filter {
+			!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_X.id) &&
+					!it.properties.containsKey(RHMIProperty.PropertyId.POSITION_Y.id)
+		}
+		Box(modifier = modifier
+			.padding(10.dp)
+			.verticalScroll(rememberScrollState())) {
+			Box(modifier = Modifier.sizeIn(10.dp, 10.dp, 1920.dp, 1440.dp)) {
+				absoluteComponents.forEach { component ->
 					Component(app, component, layout, app.eventHandler, onClickAction)
+				}
+				Column {
+					relativeComponents.forEach { component ->
+						Component(app, component, layout, app.eventHandler, onClickAction)
+					}
 				}
 			}
 		}
@@ -166,5 +164,3 @@ fun Component(app: RHMIAppInfo, component: RHMIComponent, layout: Int,
 		}
 	}
 }
-
-val LocalTextDB = staticCompositionLocalOf { emptyMap<String, Map<Int, String>>() }
